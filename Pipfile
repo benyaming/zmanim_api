@@ -6,7 +6,11 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
+fastapi = "*"
 aiohttp = "*"
+uvicorn = "*"
+babel = "*"
+pytz = "*"
 
 
 [requires]

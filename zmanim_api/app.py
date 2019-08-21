@@ -14,7 +14,7 @@ api = FastAPI()
 lang_param = Query(Languages.en, description=ds.lang)
 cl_param = Query(CLOffset.cl_18.value, description='qwerrt')  # todo descr
 date_param = (Query(..., description=ds.date))
-lat_param = (Query(..., description=ds.lat))
+lat_param = Query(..., description=ds.lat)
 lng_param = Query(..., description=ds.lng)
 diaspora_param = Query(False, description='diaspora descr')  # todo descr
 
@@ -37,9 +37,12 @@ async def getzmanim(
 
 @api.get('/shabbos')
 async def get_shabos(
-        cl_offset: CLOffset = cl_param, diaspora: bool = diaspora_param,
-        lang: Languages = lang_param, lat: float = lat_param,
-        lng: float = lng_param) -> dict:
+        cl_offset: CLOffset = cl_param,
+        diaspora: bool = diaspora_param,
+        lang: Languages = lang_param,
+        lat: float = lat_param,
+        lng: float = lng_param
+) -> dict:
     data = await shabbos(lang.value, lat, lng, diaspora, cl_offset.value)
     return data
 

@@ -6,6 +6,7 @@ from aiohttp import request
 from pytz import timezone
 
 from settings import I18N_DOMAIN
+from zmanim_api.api.utils import get_tz
 from zmanim_api.api import localized_texts as txt
 
 
@@ -22,13 +23,14 @@ async def _make_calendar_data_request(params: dict) -> dict:
     return raw_data
 
 
-async def daf_yomi(lang: str, tz: str, date: str, lat: str, lng: str) -> dict:
+async def daf_yomi(lang: str, date: str, lat: float, lng: float) -> dict:
     _ = get_translator(lang)
+    tz = get_tz(lat, lng)
     params = {
         'timezone': tz,
         'dateBegin': date,
-        'lat': lat,
-        'lng': lng
+        'lat': str(lat),
+        'lng': str(lng)
     }
     raw_data = await _make_calendar_data_request(params)
     
@@ -39,14 +41,14 @@ async def daf_yomi(lang: str, tz: str, date: str, lat: str, lng: str) -> dict:
     return daf_yomi_data
 
 
-async def zmanim(lang: str, tz: str, date: str, lat: str, lng: str,
-                 settings: dict) -> dict:
+async def zmanim(lang: str, date: str, lat: float, lng: float, settings: dict) -> dict:
     _ = get_translator(lang)
+    tz = get_tz(lat, lng)
     params = {
         'timezone': tz,
         'dateBegin': date,
-        'lat': lat,
-        'lng': lng
+        'lat': str(lat),
+        'lng': str(lng)
     }
     raw_data = await _make_calendar_data_request(params)
     zmanim_raw: dict = raw_data['zmanim']
@@ -82,10 +84,11 @@ async def zmanim(lang: str, tz: str, date: str, lat: str, lng: str,
     return zmanim_data
 
 
-async def shabbos(lang: str, tz: str, lat: str, lng: str, diaspora: bool,
-                  cl_offset: str) -> dict:
+async def shabbos(lang: str, lat: float, lng: float, diaspora: bool, cl_offset: str) \
+        -> dict:
     _ = get_translator(lang)
 
+    tz = get_tz(lat, lng)
     tz_time = timezone(tz)
     now = dt.now(tz_time)
 
@@ -97,8 +100,8 @@ async def shabbos(lang: str, tz: str, lat: str, lng: str, diaspora: bool,
     params = {
         'timezone': tz,
         'dateBegin': shabbos_date,
-        'lat': lat,
-        'lng': lng,
+        'lat': str(lat),
+        'lng': str(lng),
         'candles_offset': cl_offset,
         'israel_holidays': str(diaspora)
     }

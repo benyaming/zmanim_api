@@ -11,6 +11,10 @@ aiohttp = "*"
 uvicorn = "*"
 babel = "*"
 pytz = "*"
+pyluach = "*"
+arrow = "*"
+requests = "*"
+timezonefinder = "*"
 
 
 [requires]

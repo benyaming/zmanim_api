@@ -1,22 +1,34 @@
 from json import loads
-from gettext import translation
+from gettext import translation as tr
 from datetime import datetime as dt, timedelta
 
 from aiohttp import request
 from pytz import timezone
 
 from settings import I18N_DOMAIN
-from zmanim_api.api.utils import get_tz
 from zmanim_api.api import localized_texts as txt
+from zmanim_api.api.utils import get_tz, is_diaspora
 
 
 def get_translator(lang: str):
-    translator = translation(domain=I18N_DOMAIN, localedir='api/locales', languages=[lang])
+    translator = tr(domain=I18N_DOMAIN, localedir='api/locales', languages=[lang])
     return translator.gettext
 
 
-async def _make_calendar_data_request(params: dict) -> dict:
-    params['mode'] = 'day'
+async def get_calendar_data(tz: str, date: str, lat: float, lng: float,
+                            cl_offset: int = 18, diaspora: bool = True) -> dict:
+    # todo kwargs
+    params = {
+        'mode': 'day',
+        'timezone': tz,
+        'dateBegin': date,
+        'lat': str(lat),
+        'lng': str(lng),
+        'candles_offset': str(cl_offset)
+    }
+    if not diaspora:
+        params['israel_holidays'] = str(not diaspora)
+
     calendar_data_url = 'http://db.ou.org/zmanim/getCalendarData.php'
     async with request(method='GET', url=calendar_data_url, params=params) as resp:
         raw_data: dict = loads(await resp.text())
@@ -26,14 +38,8 @@ async def _make_calendar_data_request(params: dict) -> dict:
 async def daf_yomi(lang: str, date: str, lat: float, lng: float) -> dict:
     _ = get_translator(lang)
     tz = get_tz(lat, lng)
-    params = {
-        'timezone': tz,
-        'dateBegin': date,
-        'lat': str(lat),
-        'lng': str(lng)
-    }
-    raw_data = await _make_calendar_data_request(params)
-    
+    raw_data = await get_calendar_data(tz, date, lat, lng)
+
     daf_yomi_data = {
         'masehet': _(txt.masehets.get(raw_data['dafYomi']['masechta'])),
         'daf': raw_data['dafYomi']['daf']
@@ -44,13 +50,8 @@ async def daf_yomi(lang: str, date: str, lat: float, lng: float) -> dict:
 async def zmanim(lang: str, date: str, lat: float, lng: float, settings: dict) -> dict:
     _ = get_translator(lang)
     tz = get_tz(lat, lng)
-    params = {
-        'timezone': tz,
-        'dateBegin': date,
-        'lat': str(lat),
-        'lng': str(lng)
-    }
-    raw_data = await _make_calendar_data_request(params)
+
+    raw_data = await get_calendar_data(tz, date, lat, lng)
     zmanim_raw: dict = raw_data['zmanim']
 
     # delete ou's 'X:XX:XX' from results
@@ -84,11 +85,11 @@ async def zmanim(lang: str, date: str, lat: float, lng: float, settings: dict) -
     return zmanim_data
 
 
-async def shabbos(lang: str, lat: float, lng: float, diaspora: bool, cl_offset: str) \
-        -> dict:
+async def shabbos(lang: str, lat: float, lng: float, cl_offset: int) -> dict:
     _ = get_translator(lang)
 
     tz = get_tz(lat, lng)
+    diaspora = is_diaspora(tz)
     tz_time = timezone(tz)
     now = dt.now(tz_time)
 
@@ -97,15 +98,8 @@ async def shabbos(lang: str, lat: float, lng: float, diaspora: bool, cl_offset: 
     shabbos_dt = now + delta
 
     shabbos_date = f'{shabbos_dt.month}/{shabbos_dt.day}/{shabbos_dt.year}'
-    params = {
-        'timezone': tz,
-        'dateBegin': shabbos_date,
-        'lat': str(lat),
-        'lng': str(lng),
-        'candles_offset': cl_offset,
-        'israel_holidays': str(diaspora)
-    }
-    raw_data = await _make_calendar_data_request(params)
+
+    raw_data = await get_calendar_data(tz, shabbos_date, lat, lng, cl_offset, diaspora)
     parasha = _(txt.shabbos_names[raw_data['parsha_shabbos']])
 
     if raw_data['zmanim']['sunset'] == 'X:XX:XX':
@@ -137,4 +131,3 @@ async def shabbos(lang: str, lat: float, lng: float, diaspora: bool, cl_offset: 
     }
 
     return shabbos_data
-

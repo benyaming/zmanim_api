@@ -3,10 +3,7 @@ from datetime import datetime as dt
 
 from pyluach.hebrewcal import HebrewDate, Month
 
-
-def get_hebrew_now() -> HebrewDate:
-    hebrew_now = HebrewDate.from_pydate(dt.now())
-    return hebrew_now
+from zmanim_api.api.utils import get_hebrew_now
 
 
 def get_molad_from_db(year: int, month: int) -> tuple:
@@ -73,4 +70,3 @@ def get_next_rosh_chodesh(date: str) -> dict:
     }
 
     return rh_data
-

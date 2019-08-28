@@ -1,10 +1,11 @@
 import uvicorn
 from fastapi import FastAPI, Query
 
-from zmanim_api.helpers import Languages, CLOffset, Holidays
+from zmanim_api.helpers import Languages, Fasts
 from zmanim_api.models import ZmanimSettingsModel
 from zmanim_api.api.ou_downloader import daf_yomi, zmanim, shabbos
 from zmanim_api.api.rosh_chodesh import get_next_rosh_chodesh
+from zmanim_api.api import holidays as hd
 from zmanim_api import openapi_desctiptions as ds
 
 
@@ -12,11 +13,10 @@ api = FastAPI()
 
 
 lang_param = Query(Languages.en, description=ds.lang)
-cl_param = Query(CLOffset.cl_18.value, description='qwerrt')  # todo descr
+cl_param = Query(18, description='qwerrt')  # todo descr
 date_param = (Query(..., description=ds.date))
 lat_param = Query(..., description=ds.lat)
 lng_param = Query(..., description=ds.lng)
-diaspora_param = Query(False, description='diaspora descr')  # todo descr
 
 
 @api.get('/')
@@ -24,7 +24,7 @@ async def read_root():
     return {'working': 'ok'}
 
 
-@ api.post('/zmanim')
+@api.post('/zmanim')
 async def getzmanim(
         settings: ZmanimSettingsModel,
         lang: Languages = lang_param,
@@ -36,44 +36,134 @@ async def getzmanim(
 
 
 @api.get('/shabbos')
-async def get_shabos(
-        cl_offset: CLOffset = cl_param,
-        diaspora: bool = diaspora_param,
+async def shabos(
+        cl_offset: int = cl_param,
         lang: Languages = lang_param,
         lat: float = lat_param,
         lng: float = lng_param
 ) -> dict:
-    data = await shabbos(lang.value, lat, lng, diaspora, cl_offset.value)
+    data = await shabbos(lang.value, lat, lng, cl_offset)
     return data
 
 
 @api.get('/rosh_chodesh')
-async def get_rosh_chodesh(date: str = Query(None, description='rh_date')) -> dict:
+async def rosh_chodesh(date: str = Query(None, description='rh_date')) -> dict:
     # todo description
     data = get_next_rosh_chodesh(date)
     return data
 
 
 @api.get('/daf_yomi')
-async def get_daf_yomi(
-        lang: Languages = lang_param, date: str = date_param,
-        lat: float = lat_param, lng: float = lng_param) -> dict:
+async def daf_yomi(
+        lang: Languages = lang_param,
+        date: str = date_param,
+        lat: float = lat_param,
+        lng: float = lng_param
+) -> dict:
     data = await daf_yomi(lang=lang.value, date=date, lat=lat, lng=lng)
     return data
 
 
-@api.get('/holyday')
-async def get_holiday(
-        lang: Languages = lang_param, date: str = Query(None, description='...'),
-        holiday: Holidays = Query(..., description='holiday type')  # todo descriptions
+@api.get('/rosh_hashana')
+async def rosh_hashana(
+        lat: float = lat_param,
+        lng: float = lng_param,
+        cl_offset: int = cl_param,
 ) -> dict:
+    data = await hd.rosh_hashana(lat=lat, lng=lng, cl_offset=cl_offset)
+    return data
 
-    return {}
+
+@api.get('/yom_kippur')
+async def yom_kippur(
+        lat: float = lat_param,
+        lng: float = lng_param,
+        cl_offset: int = cl_param,
+) -> dict:
+    data = await hd.yom_kippur(lat=lat, lng=lng, cl_offset=cl_offset)
+    return data
+
+
+@api.get('/succos')
+async def succos(
+        lat: float = lat_param,
+        lng: float = lng_param,
+        cl_offset: int = cl_param
+) -> dict:
+    data = await hd.succos(lat=lat, lng=lng, cl_offset=cl_offset)
+    return data
+
+
+@api.get('/shmini_atzeres')
+async def shmini_atzeres(
+        lat: float = lat_param,
+        lng: float = lng_param,
+        cl_offset: int = cl_param
+) -> dict:
+    data = await hd.shmini_atzeres(lat=lat, lng=lng, cl_offset=cl_offset)
+    return data
+
+
+@api.get('/pesach')
+async def pesach(
+        lat: float = lat_param,
+        lng: float = lng_param,
+        cl_offset: int = cl_param
+) -> dict:
+    data = await hd.pesach(lat=lat, lng=lng, cl_offset=cl_offset)
+    return data
+
+
+@api.get('/shavuos')
+async def shavuos(
+        lat: float = lat_param,
+        lng: float = lng_param,
+        cl_offset: int = cl_param
+) -> dict:
+    data = await hd.shavuos(lat=lat, lng=lng, cl_offset=cl_offset)
+    return data
+
+
+@api.get('/channukah')
+async def channukah() -> dict:
+    data = hd.channukah()
+    return data
+
+
+@api.get('/tu_bishvat')
+async def tu_bishvat() -> dict:
+    data = hd.tu_bishvat()
+    return data
+
+
+@api.get('/purim')
+async def purim() -> dict:
+    data = hd.purim()
+    return data
+
+
+@api.get('/israel_holidays')
+async def israel_holidays() -> dict:
+    data = hd.israel_holidays()
+    return data
+
+
+@api.get('/fasts')
+async def fasts(
+        fast_name: Fasts = Query(..., description='Select fast name'),
+        lat: float = lat_param,
+        lng: float = lng_param
+) -> dict:
+    # todo descr
+    data = await hd.fast(fast_name.name, lat, lng)
+    return data
 
 
 if __name__ == '__main__':
     uvicorn.run(api, host='0.0.0.0', port=1000)
 
+# todo what do we translate? month names? ...?
+# todo havdala time? 850? 42? ...?
 
 # C:\Users\Benyomin\PycharmProjects\zmanim_api>python c:\Users\Benyomin\AppData\Local\Programs\Python\Python36-32\Tools\i18n\pygettext.py -d zmanim_api -o zmanim_api\api\locales\base.pot zmanim_ap
 # i\api\localized_texts.py

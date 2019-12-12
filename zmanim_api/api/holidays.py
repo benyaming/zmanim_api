@@ -1,10 +1,11 @@
-from typing import Tuple, Dict, Union
-from datetime import date, timedelta
+from typing import Tuple
+from datetime import date, datetime as dt, timedelta
 
 from pyluach.hebrewcal import HebrewDate, Year
 
+from zmanim_api.helpers import HavdalaChoises
 from zmanim_api.api.ou_downloader import get_calendar_data
-from zmanim_api.api.utils import get_hebrew_now, get_tz, is_diaspora, formatted_get
+from zmanim_api.api.utils import get_hebrew_now, get_tz, is_diaspora
 
 
 DATE_FORMAT = '%m/%d/%Y'
@@ -75,23 +76,12 @@ def _get_day_1_date(day_1_date: Tuple[int, int]) -> date:
             (day_1_date == YOM_HAZIKARON and holiday_date.weekday() == 2):
         holiday_date = HebrewDate(holiday_date.year, holiday_month, holiday_day + 1)
 
-    # # if yom haatzmaut felt on friday, moove it to thursday
-    # if day_1_date == YOM_HAATZMAUT and holiday_date.weekday() == 6:
-    #     holiday_date = HebrewDate(holiday_date.year, holiday_month, holiday_day - 1)
-
-    # # if yom haatzmaut felt on shabbat, moove it to thursday
-    # if day_1_date == YOM_HAATZMAUT and holiday_date.weekday() == 7:
-    #     holiday_date = HebrewDate(holiday_date.year, holiday_month, holiday_day - 2)
-
-    # # if yom haatzmaut felt on monday, moove it to tuesday
-    # if day_1_date == YOM_HAZIKARON and holiday_date.weekday() == 2:
-    #     holiday_date = HebrewDate(holiday_date.year, holiday_month, holiday_day + 1)
-
     return holiday_date.to_pydate()
 
 
-async def _get_generic_yomtov_dates(
+async def _get_generic_yomtov_data(
         day_1_date: Tuple[int, int],
+        havdala_opinion: HavdalaChoises,
         params: dict,
         is_rosh_hashana: bool = False,
         is_succos: bool = False
@@ -100,19 +90,32 @@ async def _get_generic_yomtov_dates(
 
     """
     date_1 = _get_day_1_date(day_1_date)
+    date_shabbos = None
+    diaspora = is_diaspora(get_tz(params['lat'], params['lng']))
+
+    yt_dates = [date_1]  # Y
     date_eve = date_1 - timedelta(1)
-    date_2 = date_1 + timedelta(1)
-    date_3 = date_1 + timedelta(2)
+
+    if diaspora or is_rosh_hashana:  # Y Y
+        yt_dates.append(date_1 + timedelta(1))
+
+    if date_1.weekday() == 6:  # S Y Y
+        date_eve = date_1 - timedelta(2)
+        date_shabbos = date_1 - timedelta(1)
+    elif yt_dates[-1].weekday() == 4:  # Y S / Y Y S
+        date_shabbos = yt_dates[-1] + timedelta(1)
+
+    # Fetch data from OU #
 
     data_eve = await _get_calendar_data(_date=date_eve, **params)
     data_1 = await _get_calendar_data(_date=date_1, **params)
 
-    data_2, data_3 = None, None
-    diaspora = is_diaspora(get_tz(params['lat'], params['lng']))
-    if diaspora or is_rosh_hashana:
-        data_2 = await _get_calendar_data(_date=date_2, **params)
-    if (diaspora or is_rosh_hashana) and date_2.weekday() == 4:
-        data_3 = await _get_calendar_data(_date=date_3, **params)
+    data_2, data_shabbos = None, None
+    if len(yt_dates) > 1:
+        data_2 = await _get_calendar_data(_date=yt_dates[1], **params)
+
+    if date_shabbos:
+        data_shabbos = await _get_calendar_data(_date=date_shabbos, **params)
 
     eve = {
         'day': date_eve.day,
@@ -122,26 +125,28 @@ async def _get_generic_yomtov_dates(
         'day': date_1.day,
         'month': date_1.month,
         'weekday': date_1.weekday(),
-        'cl': formatted_get(data_eve, CL),
-        'havdala': formatted_get(data_1, HAVDALA)
+        'cl': data_eve.get(CL),
+        'havdala': data_1.get(HAVDALA)
     }
 
-    day_2, day_3 = None, None
+    day_2, shabbos = None, None
     if data_2:
         day_2 = {
-            'day': date_2.day,
-            'month': date_2.month,
-            'weekday': date_2.weekday(),
-            'cl': formatted_get(data_1, CL),
-            'havdala': formatted_get(data_2, HAVDALA)
+            'day': yt_dates[1].day,
+            'month': yt_dates[1].month,
+            'weekday': yt_dates[1].weekday(),
+            'cl': data_1.get(CL),
+            'havdala': data_2.get(HAVDALA)
         }
-    if data_3:
-        day_3 = {
-            'day': date_3.day,
-            'month': date_3.month,
-            'weekday': date_3.weekday(),
-            'cl': formatted_get(data_2, CL),
-            'havdala': formatted_get(data_3, HAVDALA)
+
+    yt_datas = [d for d in [data_1, data_2] if d]
+    if data_shabbos:
+        shabbos = {
+            'day': date_shabbos.day,
+            'month': date_shabbos.month,
+            'weekday': date_shabbos.weekday(),
+            'cl': yt_datas[-1].get(CL),
+            'havdala': data_shabbos.get(HAVDALA) if date_1.weekday() != 6 else None
         }
 
     final_data = {
@@ -149,7 +154,7 @@ async def _get_generic_yomtov_dates(
         'eve': eve,
         'day_1': day_1,
         'day_2': day_2,
-        'day_3': day_3
+        'shabbos': shabbos
     }
 
     if is_succos:
@@ -170,20 +175,18 @@ async def _get_calendar_data(
         cl_offset: int = 18
 ) -> dict:
     tz = get_tz(lat, lng)
-    diaspora = is_diaspora(tz)
     data = await get_calendar_data(
         tz=tz,
-        date=_date.strftime(DATE_FORMAT),
+        date=_date,
         lat=lat,
         lng=lng,
-        cl_offset=cl_offset,
-        diaspora=diaspora
+        cl_offset=cl_offset
     )
     return data
 
 
 async def rosh_hashana(**kwargs) -> dict:
-    final_data = await _get_generic_yomtov_dates(ROSH_HASHANA, kwargs, True)
+    final_data = await _get_generic_yomtov_data(ROSH_HASHANA, kwargs, True)
     return final_data
 
 
@@ -204,8 +207,8 @@ async def yom_kippur(lat: float, lng: float, cl_offset: int) -> dict:
             'month': date_yk.month,
             'day': date_yk.day,
             'weekday': date_yk.weekday(),
-            'cl': formatted_get(data_eve, CL),
-            'havdala': formatted_get(data_yk, HAVDALA),
+            'cl': data_eve.get(CL),
+            'havdala': data_yk.get(HAVDALA),
         }
     }
 
@@ -213,19 +216,19 @@ async def yom_kippur(lat: float, lng: float, cl_offset: int) -> dict:
 
 
 async def succos(**kwargs) -> dict:
-    final_data = await _get_generic_yomtov_dates(SUCCOS, kwargs, is_succos=True)
+    final_data = await _get_generic_yomtov_data(SUCCOS, kwargs, is_succos=True)
     return final_data
 
 
 async def shmini_atzeres(**kwargs) -> dict:
-    final_data = await _get_generic_yomtov_dates(SHMINI_ATZERES, kwargs)
+    final_data = await _get_generic_yomtov_data(SHMINI_ATZERES, kwargs)
     return final_data
 
 
 async def pesach(**kwargs) -> dict:
-    part_1_data = await _get_generic_yomtov_dates(PESACH, kwargs)
+    part_1_data = await _get_generic_yomtov_data(PESACH, kwargs)
     pesach_7_date = (PESACH[0] + 7, PESACH[1])
-    part_2_data = await _get_generic_yomtov_dates(pesach_7_date, kwargs)
+    part_2_data = await _get_generic_yomtov_data(pesach_7_date, kwargs)
 
     final_data = {
         'year': part_1_data['year'],
@@ -236,7 +239,7 @@ async def pesach(**kwargs) -> dict:
 
 
 async def shavuos(**kwargs) -> dict:
-    final_data = await _get_generic_yomtov_dates(SHAVUOS, kwargs)
+    final_data = await _get_generic_yomtov_data(SHAVUOS, kwargs)
     return final_data
 
 
@@ -335,14 +338,58 @@ def israel_holidays() -> dict:
     return final_data
 
 
-async def fast(fast_name: str, lat: float, lng: float) -> dict:
+async def fast(fast_name: str, lat: float, lng: float, havdala: HavdalaChoises) -> dict:
+    is_9_av = True if fast_name == 'fast_9_av' else None
+
     fast_date = _get_day_1_date(FASTS[fast_name])
+    # The 9 of Av, instead of other fasts, starts at eve of his date, so we need to
+    # calculate additional eve and date
+    eve_date = fast_date - timedelta(1)
 
     fast_data = await _get_calendar_data(lat, lng, fast_date)
+    eve_data = await _get_calendar_data(lat, lng, eve_date) if is_9_av else None
 
+    eve, chatzot = None, None
+    start_time = fast_data['zmanim'].get('alos_ma')
+    if is_9_av:
+        eve = {
+            'day': eve_date.day,
+            'month': eve_date.month,
+            'year': eve_date.year,
+            'weekday': eve_date.weekday()
+        }
+        start_time = eve_data['zmanim'].get('sunset')
+        chatzot = fast_data['zmanim'].get('chatzos')
 
+    # calculate additional fast end times:
+    sunset = dt.strptime(fast_data['zmanim']['sunset'], "%H:%M")
+    sba_time = (sunset + timedelta(minutes=31)).strftime("%H:%M")
+    nvr_time = (sunset + timedelta(minutes=28)).strftime("%H:%M")
+    ssk_time = (sunset + timedelta(minutes=25)).strftime("%H:%M")
 
+    final_data = {
+        'fast_name': fast_name,
+        'eve': eve,
+        'date': {
+            'day': fast_date.day,
+            'month': fast_date.month,
+            'year': fast_date.year,
+            'weekday': fast_date.weekday()
+            },
+        'fast': {
+            'start_time': start_time,
+            'hatzot': chatzot,
+            'havdala': fast_data['zmanim'][havdala.name],
+            'havdala_opinion': havdala.value,
+            'sba_time': sba_time,
+            'nvr_time': nvr_time,
+            'ssk_time': ssk_time
+        }
+    }
 
+    return final_data
 
 
 # TODO comments. docstrings
+# TODO class for calendar_data, zmanim_data
+# TODO polar area error for holidays and fasts

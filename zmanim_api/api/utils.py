@@ -25,6 +25,12 @@ def is_diaspora(tz) -> bool:
 
 
 def _shift_until_next_month(d: HebrewDate) -> HebrewDate:
+    """
+    Skips month day-by-day until 1st of next month.
+    For situation when you need a next rosh chodesh date and skip the Tishrei.
+    :param d:
+    :return:
+    """
     # todo EXPLAIN HOW THIS SHIT WORKS!
     if d.month > (d - 1).month:
         return d
@@ -33,6 +39,12 @@ def _shift_until_next_month(d: HebrewDate) -> HebrewDate:
 
 
 def get_hebrew_now(custom_date: date = None, rh_mode: bool = False) -> HebrewDate:
+    """
+    Returns current (if `custom_date` not provided) hebrew datetime.
+    :param custom_date: If provided, converts given datetime to hebrew datetime
+    :param rh_mode: If true, skips Tishrei
+    :return:
+    """
     now = custom_date if custom_date else dt.now()
     hebrew_now = HebrewDate.from_pydate(now)
 
@@ -40,7 +52,6 @@ def get_hebrew_now(custom_date: date = None, rh_mode: bool = False) -> HebrewDat
     if rh_mode and hebrew_now.month == 6:
         hebrew_now = _shift_until_next_month(hebrew_now)
 
-    print(hebrew_now)
     return hebrew_now
 
 

@@ -1,7 +1,9 @@
-from pyluach.hebrewcal import HebrewDate, Year
+from zmanim.zmanim_calendar import ZmanimCalendar
+from zmanim.util.geo_location import GeoLocation
 
-for year in range(5700, 5800):
-    month = 1
-    date = HebrewDate(year, month, 15)
-    if date.weekday() == 1:
-        print(date)
+
+location = GeoLocation(name='d', latitude=34.837758, longitude=32.090277, time_zone='Asia/Hebron')
+calendar = ZmanimCalendar(geo_location=location)
+
+calendar.tzais()
+

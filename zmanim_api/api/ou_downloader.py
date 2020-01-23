@@ -27,12 +27,12 @@ async def get_calendar_data(tz: str, date: Date, lat: float, lng: float,
     calendar_data_url = 'http://db.ou.org/zmanim/getCalendarData.php'
     async with request(method='GET', url=calendar_data_url, params=params) as resp:
         raw_data: dict = loads(await resp.text())
-        zmanim = _convert_ou_zmanim(raw_data['zmanim'], cl_offset=cl_offset)
+        zmanim = _clean_ou_zmanim(raw_data['zmanim'], cl_offset=cl_offset)
 
     return raw_data
 
 
-def _convert_ou_zmanim(zmanim_dict: dict, cl_offset: int = None) -> dict:
+def _clean_ou_zmanim(zmanim_dict: dict, cl_offset: int = None) -> dict:
     """
     Fix and replace all `XX:XX` to `None` or calculate them, if it possible;
     Calculate additional opinions (Magen Avraham and more);
@@ -41,6 +41,7 @@ def _convert_ou_zmanim(zmanim_dict: dict, cl_offset: int = None) -> dict:
     :param zmanim_dict: A dictionary that OU returned
     :param cl_offset: number of minutes before shkia
     """
+
     # remove seconds and :XX from timings:
     zmanim_dict = {k: v[:-3] for k, v in zmanim_dict.items()}
 

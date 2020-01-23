@@ -15,6 +15,7 @@ pyluach = "*"
 arrow = "*"
 requests = "*"
 timezonefinder = "*"
+zmanim = "*"
 
 [requires]
 python_version = "3.8"

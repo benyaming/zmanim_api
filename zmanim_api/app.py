@@ -9,7 +9,9 @@ from starlette import status
 from zmanim_api.helpers import LanguageChoises, FastsChoises, HavdalaChoises, \
     DATE_PATTERN, DATE_FORMAT
 from zmanim_api.models import ZmanimSettingsModel
-from zmanim_api.api.ou_downloader import get_daf_yomi, zmanim, shabbos
+from zmanim_api.api.daf_yomi import get_daf_yomi
+from zmanim_api.api.zmanimm import get_zmanim
+from zmanim_api.api.shabbos import shabbos
 from zmanim_api.api.rosh_chodesh import get_next_rosh_chodesh
 from zmanim_api.api import holidays as hd
 from zmanim_api import openapi_desctiptions as ds
@@ -24,6 +26,7 @@ date_param = Query(..., description=ds.date, regex=DATE_PATTERN)
 date_optional_param = Query(None, description=ds.date, regex=DATE_PATTERN)
 lat_param = Query(..., description=ds.lat, ge=-90, le=90)
 lng_param = Query(..., description=ds.lng, ge=-180, le=180)
+elevation_param = Query(0, description='', ge=0)
 havdala_param = Query(HavdalaChoises.tzeis_850_degrees, description='tzeit')
 
 
@@ -46,6 +49,7 @@ async def getzmanim(
         response: Response,
         lang: LanguageChoises = lang_param,
         date: str = date_param,
+        elevation: float = elevation_param,
         lat: float = lat_param,
         lng: float = lng_param,
 ) -> dict:
@@ -53,7 +57,13 @@ async def getzmanim(
     if not d:
         response.status_code = status.HTTP_400_BAD_REQUEST
         return {'message': f'Date {date} does not exist!'}
-    data = await zmanim(lang.value, d, lat, lng, settings.dict())
+    data = await get_zmanim(
+        lang=lang.value,
+        date=d,
+        lat=lat,
+        lng=lng,
+        elevation=elevation,
+        settings=settings)
     return data
 
 
@@ -196,7 +206,7 @@ async def fasts(
 
 
 if __name__ == '__main__':
-    uvicorn.run(api, host='0.0.0.0', port=1000)
+    uvicorn.run(api, port=1000)
 
 # todo what do we translate? month names? ...?
 # todo havdala_param to holidays and fasts (?)

@@ -1,5 +1,5 @@
 import sqlite3
-from datetime import datetime as dt
+from datetime import datetime as dt, date as Date
 
 from pyluach.hebrewcal import HebrewDate, Month
 
@@ -17,8 +17,7 @@ def get_molad_from_db(year: int, month: int) -> tuple:
         return molad
 
 
-def get_next_molad() -> dict:
-    now = get_hebrew_now()
+def get_next_molad(now: HebrewDate) -> dict:
     year, month = now.year, now.month
     # we looking for next month's molad and not for tishrei
     month += 1 if month != 7 else 2
@@ -35,12 +34,8 @@ def get_next_molad() -> dict:
     return molad
 
 
-def get_next_rosh_chodesh(date: str) -> dict:
-    # todo custom date
-    now = get_hebrew_now()
-    # if rosh chodesh today, move to previous day
-    if now.day == 30 or now.day == 1:
-        now -= 1
+def get_next_rosh_chodesh(date: Date = None) -> dict:
+    now = get_hebrew_now(date, rh_mode=True)
 
     month = Month(now.year, now.month)
     month_dates = [day for day in month.iterdates()]
@@ -64,9 +59,10 @@ def get_next_rosh_chodesh(date: str) -> dict:
         rh_dates.append(date)
 
     rh_data = {
+        'month_name': (month + 1).name,
         'days': rh_dates,
         'duration': rh_len,
-        'molad': get_next_molad()
+        'molad': get_next_molad(now)
     }
 
     return rh_data

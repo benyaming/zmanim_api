@@ -1,9 +1,17 @@
+from typing import Optional
+from datetime import datetime as dt, date as Date
+
 import uvicorn
 from fastapi import FastAPI, Query
+from starlette.responses import Response
+from starlette import status
 
-from zmanim_api.helpers import Languages, Fasts
+from zmanim_api.helpers import LanguageChoises, FastsChoises, HavdalaChoises, \
+    DATE_PATTERN, DATE_FORMAT
 from zmanim_api.models import ZmanimSettingsModel
-from zmanim_api.api.ou_downloader import daf_yomi, zmanim, shabbos
+from zmanim_api.api.daf_yomi import get_daf_yomi
+from zmanim_api.api.zmanimm import get_zmanim
+from zmanim_api.api.shabbos import shabbos
 from zmanim_api.api.rosh_chodesh import get_next_rosh_chodesh
 from zmanim_api.api import holidays as hd
 from zmanim_api import openapi_desctiptions as ds
@@ -12,11 +20,22 @@ from zmanim_api import openapi_desctiptions as ds
 app = FastAPI()
 
 
-lang_param = Query(Languages.en, description=ds.lang)
-cl_param = Query(18, description='qwerrt')  # todo descr
-date_param = (Query(..., description=ds.date))
-lat_param = Query(..., description=ds.lat)
-lng_param = Query(..., description=ds.lng)
+lang_param = Query(LanguageChoises.en, description=ds.lang)
+cl_param = Query(18, description='qwerrt', ge=0, lt=100)
+date_param = Query(..., description=ds.date, regex=DATE_PATTERN)
+date_optional_param = Query(None, description=ds.date, regex=DATE_PATTERN)
+lat_param = Query(..., description=ds.lat, ge=-90, le=90)
+lng_param = Query(..., description=ds.lng, ge=-180, le=180)
+elevation_param = Query(0, description='', ge=0)
+havdala_param = Query(HavdalaChoises.tzeis_850_degrees, description='tzeit')
+
+
+def convert_date_to_dt(date: str) -> Optional[Date]:
+    try:
+        response = dt.strptime(date, DATE_FORMAT)
+    except ValueError:
+        response = False
+    return response
 
 
 @app.get('/')
@@ -27,40 +46,66 @@ async def read_root():
 @app.post('/zmanim')
 async def getzmanim(
         settings: ZmanimSettingsModel,
-        lang: Languages = lang_param,
+        response: Response,
+        lang: LanguageChoises = lang_param,
         date: str = date_param,
+        elevation: float = elevation_param,
         lat: float = lat_param,
-        lng: float = lng_param) -> dict:
-    data = await zmanim(lang.value, date, lat, lng, settings.dict())
+        lng: float = lng_param,
+) -> dict:
+    d = convert_date_to_dt(date)
+    if not d:
+        response.status_code = status.HTTP_400_BAD_REQUEST
+        return {'message': f'Date {date} does not exist!'}
+    data = await get_zmanim(
+        lang=lang.value,
+        date=d,
+        lat=lat,
+        lng=lng,
+        elevation=elevation,
+        settings=settings)
     return data
 
 
 @app.get('/shabbos')
 async def shabos(
         cl_offset: int = cl_param,
-        lang: Languages = lang_param,
+        lang: LanguageChoises = lang_param,
         lat: float = lat_param,
-        lng: float = lng_param
+        lng: float = lng_param,
+        havdala: HavdalaChoises = havdala_param
 ) -> dict:
-    data = await shabbos(lang.value, lat, lng, cl_offset)
+    data = await shabbos(lang.value, lat, lng, cl_offset, havdala)
     return data
 
 
 @app.get('/rosh_chodesh')
-async def rosh_chodesh(date: str = Query(None, description='rh_date')) -> dict:
-    # todo description
-    data = get_next_rosh_chodesh(date)
+async def rosh_chodesh(response: Response, date: str = date_optional_param) -> dict:
+
+    if not date:
+        data = get_next_rosh_chodesh()
+        return data
+    d = convert_date_to_dt(date)
+    if not d:
+        response.status_code = status.HTTP_400_BAD_REQUEST
+        return {'message': f'Date {date} does not exist!'}
+    data = get_next_rosh_chodesh(d)
     return data
 
 
 @app.get('/daf_yomi')
 async def daf_yomi(
-        lang: Languages = lang_param,
+        response: Response,
+        lang: LanguageChoises = lang_param,
         date: str = date_param,
         lat: float = lat_param,
         lng: float = lng_param
 ) -> dict:
-    data = await daf_yomi(lang=lang.value, date=date, lat=lat, lng=lng)
+    d = convert_date_to_dt(date)
+    if not d:
+        response.status_code = status.HTTP_400_BAD_REQUEST
+        return {'message': f'Date {date} does not exist!'}
+    data = await get_daf_yomi(lang=lang.value, date=d, lat=lat, lng=lng)
     return data
 
 
@@ -150,20 +195,22 @@ async def israel_holidays() -> dict:
 
 @app.get('/fasts')
 async def fasts(
-        fast_name: Fasts = Query(..., description='Select fast name'),
+        fast_name: FastsChoises = Query(..., description='Select fast name'),
         lat: float = lat_param,
-        lng: float = lng_param
+        lng: float = lng_param,
+        havdala: HavdalaChoises = havdala_param
 ) -> dict:
     # todo descr
-    data = await hd.fast(fast_name.name, lat, lng)
+    data = await hd.fast(fast_name.name, lat, lng, havdala)
     return data
 
 
 if __name__ == '__main__':
-    uvicorn.run(app, host='0.0.0.0', port=1000)
+    uvicorn.run(app, port=2000)
 
 # todo what do we translate? month names? ...?
-# todo havdala time? 850? 42? ...?
+# todo havdala_param to holidays and fasts (?)
+# todo correct time format in all places?
 
 # C:\Users\Benyomin\PycharmProjects\zmanim_api>python c:\Users\Benyomin\AppData\Local\Programs\Python\Python36-32\Tools\i18n\pygettext.py -d zmanim_api -o zmanim_api\api\locales\base.pot zmanim_ap
 # i\api\localized_texts.py

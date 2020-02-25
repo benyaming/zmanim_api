@@ -10,7 +10,7 @@ from zmanim_api import openapi_desctiptions as ds
 
 
 api = FastAPI()
-
+# test
 
 lang_param = Query(Languages.en, description=ds.lang)
 cl_param = Query(18, description='qwerrt')  # todo descr

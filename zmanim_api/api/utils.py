@@ -1,11 +1,10 @@
-from typing import Union, Tuple
 from gettext import translation as tr
 from datetime import datetime as dt, date
 
 from timezonefinder import TimezoneFinder
-from pyluach.hebrewcal import HebrewDate, Month
+from pyluach.hebrewcal import HebrewDate
 
-from settings import I18N_DOMAIN
+from zmanim_api.settings import I18N_DOMAIN
 
 
 def get_translator(lang: str):

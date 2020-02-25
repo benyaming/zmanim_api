@@ -1,5 +1,4 @@
 from datetime import date as Date, datetime as dt
-from typing import TypedDict
 
 from zmanim.util.geo_location import GeoLocation
 from zmanim.zmanim_calendar import ZmanimCalendar

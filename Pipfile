@@ -7,15 +7,13 @@ verify_ssl = true
 
 [packages]
 fastapi = "*"
-aiohttp = "*"
 uvicorn = "*"
-babel = "*"
 pytz = "*"
 pyluach = "*"
 arrow = "*"
-requests = "*"
 timezonefinder = "*"
 zmanim = "*"
+aiohttp = "*"
 
 [requires]
-python_version = "3.8"
+python_version = "3.7"

@@ -17,7 +17,7 @@ from zmanim_api.api import holidays as hd
 from zmanim_api import openapi_desctiptions as ds
 
 
-api = FastAPI()
+app = FastAPI()
 
 
 lang_param = Query(LanguageChoises.en, description=ds.lang)
@@ -38,12 +38,12 @@ def convert_date_to_dt(date: str) -> Optional[Date]:
     return response
 
 
-@api.get('/')
+@app.get('/')
 async def read_root():
     return {'working': 'ok'}
 
 
-@api.post('/zmanim')
+@app.post('/zmanim')
 async def getzmanim(
         settings: ZmanimSettingsModel,
         response: Response,
@@ -67,7 +67,7 @@ async def getzmanim(
     return data
 
 
-@api.get('/shabbos')
+@app.get('/shabbos')
 async def shabos(
         cl_offset: int = cl_param,
         lang: LanguageChoises = lang_param,
@@ -79,7 +79,7 @@ async def shabos(
     return data
 
 
-@api.get('/rosh_chodesh')
+@app.get('/rosh_chodesh')
 async def rosh_chodesh(response: Response, date: str = date_optional_param) -> dict:
 
     if not date:
@@ -93,7 +93,7 @@ async def rosh_chodesh(response: Response, date: str = date_optional_param) -> d
     return data
 
 
-@api.get('/daf_yomi')
+@app.get('/daf_yomi')
 async def daf_yomi(
         response: Response,
         lang: LanguageChoises = lang_param,
@@ -109,7 +109,7 @@ async def daf_yomi(
     return data
 
 
-@api.get('/rosh_hashana')
+@app.get('/rosh_hashana')
 async def rosh_hashana(
         lat: float = lat_param,
         lng: float = lng_param,
@@ -119,7 +119,7 @@ async def rosh_hashana(
     return data
 
 
-@api.get('/yom_kippur')
+@app.get('/yom_kippur')
 async def yom_kippur(
         lat: float = lat_param,
         lng: float = lng_param,
@@ -129,7 +129,7 @@ async def yom_kippur(
     return data
 
 
-@api.get('/succos')
+@app.get('/succos')
 async def succos(
         lat: float = lat_param,
         lng: float = lng_param,
@@ -139,7 +139,7 @@ async def succos(
     return data
 
 
-@api.get('/shmini_atzeres')
+@app.get('/shmini_atzeres')
 async def shmini_atzeres(
         lat: float = lat_param,
         lng: float = lng_param,
@@ -149,7 +149,7 @@ async def shmini_atzeres(
     return data
 
 
-@api.get('/pesach')
+@app.get('/pesach')
 async def pesach(
         lat: float = lat_param,
         lng: float = lng_param,
@@ -159,7 +159,7 @@ async def pesach(
     return data
 
 
-@api.get('/shavuos')
+@app.get('/shavuos')
 async def shavuos(
         lat: float = lat_param,
         lng: float = lng_param,
@@ -169,31 +169,31 @@ async def shavuos(
     return data
 
 
-@api.get('/channukah')
+@app.get('/channukah')
 async def channukah() -> dict:
     data = hd.channukah()
     return data
 
 
-@api.get('/tu_bishvat')
+@app.get('/tu_bishvat')
 async def tu_bishvat() -> dict:
     data = hd.tu_bishvat()
     return data
 
 
-@api.get('/purim')
+@app.get('/purim')
 async def purim() -> dict:
     data = hd.purim()
     return data
 
 
-@api.get('/israel_holidays')
+@app.get('/israel_holidays')
 async def israel_holidays() -> dict:
     data = hd.israel_holidays()
     return data
 
 
-@api.get('/fasts')
+@app.get('/fasts')
 async def fasts(
         fast_name: FastsChoises = Query(..., description='Select fast name'),
         lat: float = lat_param,
@@ -206,7 +206,7 @@ async def fasts(
 
 
 if __name__ == '__main__':
-    uvicorn.run(api, port=1000)
+    uvicorn.run(app, port=2000)
 
 # todo what do we translate? month names? ...?
 # todo havdala_param to holidays and fasts (?)

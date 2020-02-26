@@ -31,8 +31,8 @@ jobs:
       - name: Tags
         run: |
           docker tag zmanim-api ${{ secrets.DOCKER_USER }}/zmanim-api:${{ github.sha }}
-#           docker tag zmanim-api ${{ secrets.DOCKER_USER }}/zmanim-api:latest
+          docker tag zmanim-api ${{ secrets.DOCKER_USER }}/zmanim-api:latest
       - name: Push
         run: |
           docker push ${{ secrets.DOCKER_USER }}/zmanim-api:${{ github.sha }}
-#           docker push ${{ secrets.DOCKER_USER }}/zmanim-api:latest
+          docker push ${{ secrets.DOCKER_USER }}/zmanim-api:latest

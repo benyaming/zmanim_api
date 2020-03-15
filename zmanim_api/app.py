@@ -41,7 +41,8 @@ def convert_date_to_dt(date: str) -> Optional[Date]:
 
 @app.get('/')
 async def forward_to_swagger():
-    return RedirectResponse('/docs')
+    prefix = f'/{ROOT_PATH}' if ROOT_PATH else ''
+    return RedirectResponse(f'{prefix}/docs')
 
 
 @app.post('/zmanim')

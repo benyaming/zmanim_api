@@ -3,7 +3,7 @@ from datetime import datetime as dt, date as Date
 
 import uvicorn
 from fastapi import FastAPI, Query
-from starlette.responses import Response
+from starlette.responses import Response, RedirectResponse
 from starlette import status
 
 from zmanim_api.helpers import LanguageChoises, FastsChoises, HavdalaChoises, \
@@ -15,9 +15,10 @@ from zmanim_api.api.shabbos import shabbos
 from zmanim_api.api.rosh_chodesh import get_next_rosh_chodesh
 from zmanim_api.api import holidays as hd
 from zmanim_api import openapi_desctiptions as ds
+from zmanim_api.settings import ROOT_PATH
 
 
-app = FastAPI()
+app = FastAPI(openapi_prefix=f'/{ROOT_PATH}')
 
 
 lang_param = Query(LanguageChoises.en, description=ds.lang)
@@ -39,8 +40,8 @@ def convert_date_to_dt(date: str) -> Optional[Date]:
 
 
 @app.get('/')
-async def read_root():
-    return {'working': 'ok'}
+async def forward_to_swagger():
+    return RedirectResponse('/docs')
 
 
 @app.post('/zmanim')
@@ -206,7 +207,7 @@ async def fasts(
 
 
 if __name__ == '__main__':
-    uvicorn.run(app, port=2000)
+    uvicorn.run(app, port=2000, use_colors=True)
 
 # todo what do we translate? month names? ...?
 # todo havdala_param to holidays and fasts (?)

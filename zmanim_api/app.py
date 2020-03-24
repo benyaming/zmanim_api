@@ -47,8 +47,8 @@ async def forward_to_swagger():
 
 @app.post('/zmanim')
 async def getzmanim(
-        settings: ZmanimSettingsModel,
         response: Response,
+        settings: ZmanimSettingsModel,
         lang: LanguageChoises = lang_param,
         date: str = date_param,
         elevation: float = elevation_param,
@@ -59,6 +59,7 @@ async def getzmanim(
     if not d:
         response.status_code = status.HTTP_400_BAD_REQUEST
         return {'message': f'Date {date} does not exist!'}
+
     data = await get_zmanim(
         lang=lang.value,
         date=d,
@@ -71,13 +72,24 @@ async def getzmanim(
 
 @app.get('/shabbos')
 async def shabos(
+        response: Response,
         cl_offset: int = cl_param,
-        lang: LanguageChoises = lang_param,
+        # lang: LanguageChoises = lang_param,
         lat: float = lat_param,
         lng: float = lng_param,
-        havdala: HavdalaChoises = havdala_param
+        elevation: float = elevation_param,
+        havdala: HavdalaChoises = havdala_param,
+        date: str = date_optional_param
 ) -> dict:
-    data = await shabbos(lang.value, lat, lng, cl_offset, havdala)
+    if date:
+        parsed_date = convert_date_to_dt(date)
+        if not parsed_date:
+            response.status_code = status.HTTP_400_BAD_REQUEST
+            return {'message': f'Date {date} does not exist!'}
+    else:
+        parsed_date = Date.today()
+
+    data = await shabbos(lat, lng, elevation, cl_offset, havdala, parsed_date)
     return data
 
 

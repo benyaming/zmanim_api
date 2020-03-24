@@ -64,13 +64,13 @@ async def shabbos(
     # warning = True if not shabbos_data['zmanim']['alos_ma'] else False
 
     final_data = {
-        'totah_part': '',
+        # 'torah_part': '',  # todo
         'cl': friday_calendar.candle_lighting(),
         'cl_offset': cl_offset,
         'havdala': havdala_time,
         'havdala_opinion': havdala.value,
-        # 'warning': warning,
-        # 'error': False
+        # 'warning': warning,  # todo
+        # 'error': False  # todo
     }
 
     return final_data

@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "0a59691095dc3a2c3562e62b472b038377ae96f1fac76f05f261a305e3a37059"
+            "sha256": "bfd55a456526a5153c0a1f18694534460191a01f6822761466823ff27bc3bd57"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -72,11 +72,11 @@
         },
         "fastapi": {
             "hashes": [
-                "sha256:532648b4e16dd33673d71dc0b35dff1b4d20c709d04078010e258b9f3a79771a",
-                "sha256:721b11d8ffde52c669f52741b6d9d761fe2e98778586f4cfd6f5e47254ba5016"
+                "sha256:2bf65ce6fab8dac001e3738570ee55aa68640ef28e7e0c0a55e2690ba86f97e7",
+                "sha256:771f59ba7e3120b872d87089126c7971d2a8d62a47a5dd4a2122fbbf7f73581c"
             ],
             "index": "pypi",
-            "version": "==0.52.0"
+            "version": "==0.53.0"
         },
         "h11": {
             "hashes": [
@@ -91,12 +91,6 @@
                 "sha256:a068a21ceac8a4d63dbfd964670474107f541babbd2250d61922f029858365fa"
             ],
             "version": "==2.9"
-        },
-        "julian": {
-            "hashes": [
-                "sha256:deee4090faad584c1875d97e72808198f802a9d2dc38a70fe2a8f790ea5dbd0a"
-            ],
-            "version": "==0.14"
         },
         "multidict": {
             "hashes": [
@@ -268,12 +262,8 @@
             "version": "==1.4.2"
         },
         "zmanim": {
-            "hashes": [
-                "sha256:22396a536cd26b9a8eb878091e340c67aad2a29f9378b412e767cdb18d5866dc",
-                "sha256:8fb7295381e533d9ae6d495e76661c35cbbec0bbf6dc281dee0980cd72418323"
-            ],
-            "index": "pypi",
-            "version": "==0.2.1"
+            "git": "https://github.com/pinnymz/python-zmanim.git",
+            "ref": "eadbde5c2c01820b5c6d0bd4f74d15fc3dd1db20"
         }
     },
     "develop": {}

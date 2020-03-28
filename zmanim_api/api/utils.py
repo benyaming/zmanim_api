@@ -19,7 +19,7 @@ def get_tz(lat: float, lng: float) -> str:
     return tz
 
 
-def is_diaspora(tz) -> bool:
+def is_diaspora(tz: str) -> bool:
     return False if tz in ['Asia/Tel_Aviv', 'Asia/Jerusalem', 'Asia/Hebron'] else True
 
 

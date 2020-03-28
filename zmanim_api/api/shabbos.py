@@ -2,10 +2,11 @@ from datetime import datetime as dt, timedelta, date as Date
 
 from zmanim.util.geo_location import GeoLocation
 from zmanim.zmanim_calendar import ZmanimCalendar
+from zmanim.limudim.calculators.parsha import Parsha
 
 
 from zmanim_api.helpers import HavdalaChoises
-from .utils import get_next_weekday, get_tz
+from .utils import get_next_weekday, get_tz, is_diaspora
 
 
 async def shabbos(
@@ -26,6 +27,7 @@ async def shabbos(
     location = GeoLocation('', lat, lng, tz, elevation)
     friday_calendar = ZmanimCalendar(candle_lighting_offset=cl_offset, geo_location=location, date=friday)
     saturday_calendar = ZmanimCalendar(candle_lighting_offset=cl_offset, geo_location=location, date=saturday)
+    torah_part = Parsha(in_israel=not is_diaspora(tz)).limud(saturday).description()
 
     havdala_calculators = {
         'tzeis_850_degrees': ('tzais', {'degrees': 8.5}),
@@ -39,7 +41,7 @@ async def shabbos(
     late_cl_warning = False if friday_calendar.alos() else True
 
     final_data = {
-        'torah_part': '',  # todo
+        'torah_part': torah_part,
         'cl': friday_calendar.candle_lighting(),
         'cl_offset': cl_offset,
         'havdala': havdala_time,

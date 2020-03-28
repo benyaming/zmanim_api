@@ -31,11 +31,14 @@ elevation_param = Query(0, description='', ge=0)
 havdala_param = Query(HavdalaChoises.tzeis_850_degrees, description='tzeit')
 
 
-def convert_date_to_dt(date: str) -> Optional[Date]:
+def parse_date(date: str, with_time: bool = True) -> Optional[Date]:
     try:
         response = dt.strptime(date, DATE_FORMAT)
     except ValueError:
         response = False
+    else:
+        if not with_time:
+            response = response.date()
     return response
 
 
@@ -55,7 +58,7 @@ async def getzmanim(
         lat: float = lat_param,
         lng: float = lng_param,
 ) -> dict:
-    d = convert_date_to_dt(date)
+    d = parse_date(date)
     if not d:
         response.status_code = status.HTTP_400_BAD_REQUEST
         return {'message': f'Date {date} does not exist!'}
@@ -82,7 +85,7 @@ async def shabos(
         date: str = date_optional_param
 ) -> dict:
     if date:
-        parsed_date = convert_date_to_dt(date)
+        parsed_date = parse_date(date, with_time=False)
         if not parsed_date:
             response.status_code = status.HTTP_400_BAD_REQUEST
             return {'message': f'Date {date} does not exist!'}
@@ -99,7 +102,7 @@ async def rosh_chodesh(response: Response, date: str = date_optional_param) -> d
     if not date:
         data = get_next_rosh_chodesh()
         return data
-    d = convert_date_to_dt(date)
+    d = parse_date(date)
     if not d:
         response.status_code = status.HTTP_400_BAD_REQUEST
         return {'message': f'Date {date} does not exist!'}
@@ -115,7 +118,7 @@ async def daf_yomi(
         lat: float = lat_param,
         lng: float = lng_param
 ) -> dict:
-    d = convert_date_to_dt(date)
+    d = parse_date(date)
     if not d:
         response.status_code = status.HTTP_400_BAD_REQUEST
         return {'message': f'Date {date} does not exist!'}

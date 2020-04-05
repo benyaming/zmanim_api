@@ -1,69 +1,52 @@
-from datetime import datetime as dt, timedelta
+from datetime import datetime as dt, timedelta, date as Date
 
-from pytz import timezone
+from zmanim.util.geo_location import GeoLocation
+from zmanim.zmanim_calendar import ZmanimCalendar
+from zmanim.limudim.calculators.parsha import Parsha
+
 
 from zmanim_api.helpers import HavdalaChoises
-from zmanim_api.api.utils import get_tz, get_translator
-from zmanim_api.api.ou_downloader import get_calendar_data
-import zmanim_api.api.localized_texts as txt
+from .utils import get_next_weekday, get_tz, is_diaspora
 
 
 async def shabbos(
-        lang: str,
+        # lang: str,
         lat: float,
         lng: float,
+        elevation: float,
         cl_offset: int,
-        havdala: HavdalaChoises
+        havdala: HavdalaChoises,
+        date: Date
 ) -> dict:
-    """
-    Attention! this function returns correct candle lighting time ONLY for current next
-    shabbos! If you need to calculate another shabbos, you need co request friday to
-    get real candle lighting time.
-    # todo test custom shabbos dates
-    :param lang:
-    :param lat:
-    :param lng:
-    :param cl_offset:
-    :param havdala:
-    :return:
-    """
-    _ = get_translator(lang)
+    # _ = get_translator(lang)
+    # 1. get friday nearest to the date
+    friday = get_next_weekday(date, 4)
+    saturday = friday + timedelta(days=1)
 
     tz = get_tz(lat, lng)
+    location = GeoLocation('', lat, lng, tz, elevation)
+    friday_calendar = ZmanimCalendar(candle_lighting_offset=cl_offset, geo_location=location, date=friday)
+    saturday_calendar = ZmanimCalendar(candle_lighting_offset=cl_offset, geo_location=location, date=saturday)
+    torah_part = Parsha(in_israel=not is_diaspora(tz)).limud(saturday).description()
 
-    tz_time = timezone(tz)
-    now = dt.now(tz_time)
+    havdala_calculators = {
+        'tzeis_850_degrees': ('tzais', {'degrees': 8.5}),
+        'tzeis_72_minutes': ('tzais', {'offset': 72}),
+        'tzeis_42_minutes': ('tzais', {'offset': 42}),
+        'tzeis_595_degrees': ('tzais', {'degrees': 5.95}),
+    }
+    havdala_calculator, kwargs = havdala_calculators[havdala.name]
 
-    # calculating nearest Saturday
-    delta = timedelta(5 - now.weekday() % 7)
-    shabbos_date = now + delta
-    eve_date = shabbos_date - timedelta(1)
-
-    eve_data = await get_calendar_data(tz, eve_date, lat, lng, cl_offset)
-    shabbos_data = await get_calendar_data(tz, shabbos_date, lat, lng)
-    parasha = _(txt.shabbos_names[shabbos_data['parsha_shabbos']])
-
-    if not shabbos_data['zmanim']['sunset']:
-        final_data = {
-            'parasha': parasha,
-            'cl': None,
-            'cl_offset': None,
-            'tzeit_kochavim': None,
-            'warning': False,
-            'error': True
-        }
-        return final_data
-
-    warning = True if not shabbos_data['zmanim']['alos_ma'] else False
+    havdala_time: dt = getattr(saturday_calendar, havdala_calculator)(kwargs)
+    late_cl_warning = False if friday_calendar.alos() else True
 
     final_data = {
-        'parasha': parasha,
-        'cl': eve_data['zmanim']['cl'],
+        'torah_part': torah_part,
+        'cl': friday_calendar.candle_lighting(),
         'cl_offset': cl_offset,
-        'havdala': shabbos_data['zmanim'][havdala.name],
+        'havdala': havdala_time,
         'havdala_opinion': havdala.value,
-        'warning': warning,
-        'error': False
+        'late_cl_warning': late_cl_warning
     }
 
     return final_data

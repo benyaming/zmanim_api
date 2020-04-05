@@ -12,7 +12,7 @@ pytz = "*"
 pyluach = "*"
 arrow = "*"
 timezonefinder = "*"
-zmanim = "*"
+zmanim = {git = "https://github.com/pinnymz/python-zmanim.git"}
 aiohttp = "*"
 
 [requires]

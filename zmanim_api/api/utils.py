@@ -1,5 +1,5 @@
 from gettext import translation as tr
-from datetime import datetime as dt, date
+from datetime import datetime as dt, date, timedelta
 
 from timezonefinder import TimezoneFinder
 from pyluach.hebrewcal import HebrewDate
@@ -19,7 +19,7 @@ def get_tz(lat: float, lng: float) -> str:
     return tz
 
 
-def is_diaspora(tz) -> bool:
+def is_diaspora(tz: str) -> bool:
     return False if tz in ['Asia/Tel_Aviv', 'Asia/Jerusalem', 'Asia/Hebron'] else True
 
 
@@ -56,5 +56,13 @@ def get_hebrew_now(custom_date: date = None, rh_mode: bool = False) -> HebrewDat
 
 def calculate_cl(shkia: str) -> str:
     ...
+
+
+def get_next_weekday(d: date, weekday: int) -> date:
+    current_day = d.weekday()
+    res = weekday - current_day
+    if res < 0:
+        res = 7 + res
+    return d + timedelta(days=res)
 
 

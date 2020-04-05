@@ -71,13 +71,13 @@ async def get_zmanim(
     zmanim = _calculate_zmanim(calendar, settings)
     return zmanim
 
-    raw_data = await get_calendar_data(tz, date, lat, lng)
-    zmanim_data: dict = raw_data['zmanim']
-
-    # select only needed zmanim
-    zmanim_data = {k: v for k, v in zmanim_data.items() if settings[k]}
-
-    # translate zmanim
-    zmanim_data = {_(txt.zmanim_names[k]): v for k, v in zmanim_data.items()}
+    # raw_data = await get_calendar_data(tz, date, lat, lng)
+    # zmanim_data: dict = raw_data['zmanim']
+    #
+    # # select only needed zmanim
+    # zmanim_data = {k: v for k, v in zmanim_data.items() if settings[k]}
+    #
+    # # translate zmanim
+    # zmanim_data = {_(txt.zmanim_names[k]): v for k, v in zmanim_data.items()}
 
     return zmanim_data

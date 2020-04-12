@@ -1,6 +1,6 @@
 lang = 'Language. `en` and `ru` supported'
-lat = 'Latitude, like `55.5`'
-lng = 'Longitude, like `37.7`'
-date = 'Date in format DD/MM/YYYY, like `13/12/2019`'
+lat = 'Latitude, like `32.09`'
+lng = 'Longitude, like `34.86`'
+date = 'Date in ISO format, like `2020-04-15`'
 tz = 'Timezone, like `Europe/Moscow`'
 

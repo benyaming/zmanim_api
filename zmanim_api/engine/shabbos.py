@@ -1,26 +1,26 @@
-from datetime import datetime as dt, timedelta, date as Date
+from datetime import datetime as dt, timedelta, date
 
 from zmanim.util.geo_location import GeoLocation
 from zmanim.zmanim_calendar import ZmanimCalendar
 from zmanim.limudim.calculators.parsha import Parsha
 
 
-from zmanim_api.helpers import HavdalaChoises
-from .utils import get_next_weekday, get_tz, is_diaspora
+from zmanim_api.api_helpers import HavdalaChoises, HAVDALA_PARAMS
+from zmanim_api.utils import get_next_weekday, get_tz, is_diaspora
 
 
-async def shabbos(
+def shabbos(
         # lang: str,
         lat: float,
         lng: float,
         elevation: float,
         cl_offset: int,
         havdala: HavdalaChoises,
-        date: Date
+        date_: date
 ) -> dict:
     # _ = get_translator(lang)
     # 1. get friday nearest to the date
-    friday = get_next_weekday(date, 4)
+    friday = get_next_weekday(date_, 4)
     saturday = friday + timedelta(days=1)
 
     tz = get_tz(lat, lng)
@@ -29,22 +29,16 @@ async def shabbos(
     saturday_calendar = ZmanimCalendar(candle_lighting_offset=cl_offset, geo_location=location, date=saturday)
     torah_part = Parsha(in_israel=not is_diaspora(tz)).limud(saturday).description()
 
-    havdala_calculators = {
-        'tzeis_850_degrees': ('tzais', {'degrees': 8.5}),
-        'tzeis_72_minutes': ('tzais', {'offset': 72}),
-        'tzeis_42_minutes': ('tzais', {'offset': 42}),
-        'tzeis_595_degrees': ('tzais', {'degrees': 5.95}),
-    }
-    havdala_calculator, kwargs = havdala_calculators[havdala.name]
+    havdala_params = HAVDALA_PARAMS[havdala.name]
 
-    havdala_time: dt = getattr(saturday_calendar, havdala_calculator)(kwargs)
+    havdala_time: dt = saturday_calendar.tzais(havdala_params)
     late_cl_warning = False if friday_calendar.alos() else True
 
     final_data = {
         'torah_part': torah_part,
-        'cl': friday_calendar.candle_lighting(),
+        'cl': friday_calendar.candle_lighting().isoformat(timespec='minutes'),
         'cl_offset': cl_offset,
-        'havdala': havdala_time,
+        'havdala': havdala_time.isoformat(timespec='minutes'),
         'havdala_opinion': havdala.value,
         'late_cl_warning': late_cl_warning
     }

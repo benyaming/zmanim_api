@@ -3,10 +3,8 @@ from datetime import date as Date, datetime as dt
 from zmanim.util.geo_location import GeoLocation
 from zmanim.zmanim_calendar import ZmanimCalendar
 
-from zmanim_api.api.utils import get_translator, get_tz
-from zmanim_api.api.ou_downloader import get_calendar_data
+from zmanim_api.utils import get_translator, get_tz
 from zmanim_api.models import ZmanimSettingsModel
-import zmanim_api.api.localized_texts as txt
 
 
 _ZMANIM_CALCULATORS = {
@@ -54,8 +52,8 @@ def _calculate_zmanim(calendar: ZmanimCalendar, settings: ZmanimSettingsModel) -
     return calculated_zmanim
 
 
-async def get_zmanim(
-        lang: str,
+def get_zmanim(
+        # lang: str,
         date: Date,
         lat: float,
         lng: float,
@@ -63,7 +61,7 @@ async def get_zmanim(
         settings: ZmanimSettingsModel
 ) -> dict:
     # cl?
-    _ = get_translator(lang)
+    # _ = get_translator(lang)
     tz = get_tz(lat, lng)
     
     location = GeoLocation('', lat, lng, tz, elevation)
@@ -71,13 +69,3 @@ async def get_zmanim(
     zmanim = _calculate_zmanim(calendar, settings)
     return zmanim
 
-    # raw_data = await get_calendar_data(tz, date, lat, lng)
-    # zmanim_data: dict = raw_data['zmanim']
-    #
-    # # select only needed zmanim
-    # zmanim_data = {k: v for k, v in zmanim_data.items() if settings[k]}
-    #
-    # # translate zmanim
-    # zmanim_data = {_(txt.zmanim_names[k]): v for k, v in zmanim_data.items()}
-
-    return zmanim_data

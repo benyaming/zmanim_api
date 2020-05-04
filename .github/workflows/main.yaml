@@ -9,19 +9,19 @@ on:
 #       - master
 
 jobs:
-  ci:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-      - uses: actions/setup-python@v1
-        with:
-          python-version: '3.7'
-      - uses: dschep/install-pipenv-action@v1
-      - name: Install requirements
-        run: pipenv install
+#  ci:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@master
+#      - uses: actions/setup-python@v1
+#        with:
+#          python-version: '3.7'
+#      - uses: dschep/install-pipenv-action@v1
+#      - name: Install requirements
+#        run: pipenv install
   cd:
     runs-on: ubuntu-latest
-    needs: ci
+#    needs: ci
     steps:
       - uses: actions/checkout@v1
       - name: Docker login

@@ -17,37 +17,37 @@ class LanguageChoises(Enum):
 
 
 class HolidayChoises(Enum):
-    rosh_hashana = 'Rosh ha-Shana'
-    yom_kippur = 'Yom Kippur'
-    succot = 'Succot'
-    shmini_atzeres = 'Shmini Atzeres/Simchat Tora'
-    chanukah = 'Chanukah'
-    tu_bi_shvat = 'Tu bi-Shvat'
-    purim = 'Purim'
-    pesach = 'Pesach'
-    lag_baomer = 'Lag ba-Omer'
-    shavuot = 'Shavuot'
-    tu_be_av = 'Tu be-Av'
-    israel_holidays = 'Israeli Holidays'
-    yom_hashoah = 'Yom ha-Shoah'
-    yom_hazikaron = 'Yom ha-Zikaron'
-    yom_haatzmaut = 'Yom ha-Atzmaut'
-    yom_yerushalaim = 'Yom Yerushalaim'
+    rosh_hashana = 'rosh_hashana'
+    yom_kippur = 'yom_kippur'
+    succot = 'succot'
+    shmini_atzeres = 'shmini_atzeres'
+    chanukah = 'chanukah'
+    tu_bi_shvat = 'tu_bi_shvat'
+    purim = 'purim'
+    pesach = 'pesach'
+    lag_baomer = 'lag_baomer'
+    shavuot = 'shavuot'
+    tu_be_av = 'tu_be_av'
+    israel_holidays = 'israel_holidays'
+    yom_hashoah = 'yom_hashoah'
+    yom_hazikaron = 'yom_hazikaron'
+    yom_haatzmaut = 'yom_haatzmaut'
+    yom_yerushalaim = 'yom_yerushalaim'
 
 
 class FastsChoises(str, Enum):
-    fast_gedalia = 'Fast of Gedaliah'
-    fast_10_teves = 'Fast of 10 of Teves'
-    fast_esther = 'Fast of Esther'
-    fast_17_tammuz = 'Fast of 17 of Tammuz'
-    fast_9_av = 'Fast of 9 of Av'
+    fast_gedalia = 'fast_gedalia'
+    fast_10_teves = 'fast_10_teves'
+    fast_esther = 'fast_esther'
+    fast_17_tammuz = 'fast_17_tammuz'
+    fast_9_av = 'fast_9_av'
 
 
 class HavdalaChoises(str, Enum):
-    tzeis_5_95_degrees = 'Tzeit ha-kochavim 5.95°'
-    tzeis_8_5_degrees = 'Tzeit ha-kochavim 8.5°'
-    tzeis_42_minutes = 'Tzeit ha-kochavim 42 minutes after shkia'
-    tzeis_72_minutes = 'Tzeit ha-kochavim 72 minutes after shkia'
+    tzeis_5_95_degrees = 'tzeis_5_95_degrees'
+    tzeis_8_5_degrees = 'tzeis_8_5_degrees'
+    tzeis_42_minutes = 'tzeis_42_minutes'
+    tzeis_72_minutes = 'tzeis_72_minutes'
 
 
 HAVDALA_PARAMS = {

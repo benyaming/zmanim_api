@@ -16,10 +16,10 @@ class ZmanimSettingsModel(BaseModel):
     mincha_gedola: bool = True
     plag_mincha: bool = True
     sunset: bool = True
-    tzeis_850_degrees: bool = True
+    tzeis_8_5_degrees: bool = True
     tzeis_72_minutes: bool = True
     tzeis_42_minutes: bool = True
-    tzeis_595_degrees: bool = True
+    tzeis_5_95_degrees: bool = True
     chatzot_laila: bool = True
     astronomical_hour_ma: bool = True
     astronomical_hour_gra: bool = True

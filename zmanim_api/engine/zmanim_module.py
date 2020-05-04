@@ -20,16 +20,16 @@ _ZMANIM_CALCULATORS = {
     'mincha_gedola': 'mincha_gedola',
     'plag_mincha': 'plag_hamincha',
     'sunset': 'sunset',
-    'tzeis_850_degrees': 'tzais',
+    'tzeis_8_5_degrees': 'tzais',
     'tzeis_72_minutes': ('tzais', {'offset': 72}),
     'tzeis_42_minutes': ('tzais', {'offset': 42}),
-    'tzeis_595_degrees': ('tzais', {'degrees': 5.95}),
+    'tzeis_5_95_degrees': ('tzais', {'degrees': 5.95}),
     'astronomical_hour_ma': 'shaah_zmanis_mga',
     'astronomical_hour_gra': 'shaah_zmanis_gra',
 }
 
 
-def _calculate_zmanim(calendar: ZmanimCalendar, settings: ZmanimSettingsModel) -> ...:
+def _calculate_zmanim(calendar: ZmanimCalendar, settings: ZmanimSettingsModel) -> dict:
     calculated_zmanim = {}
     for zman_name, required in settings.dict().items():
         if not required:

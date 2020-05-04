@@ -53,10 +53,10 @@ zmanim_names = {
     'alos_ma': _('Alot Hashachar'),
     'plag_mincha_ma': _('Plag Mincha'),
     'sunset': _('Shkiat Hachama'),
-    'tzeis_850_degrees': _('Tzeit Hakochavim [850°]'),
+    'tzeis_8_5_degrees': _('Tzeit Hakochavim [8.5°]'),
     'tzeis_72_minutes': _('Tzeit Hakochavim [R"T]'),
     'tzeis_42_minutes': _('Tzeit Hakochavim [42 minutes]'),
-    'tzeis_595_degrees': _('Tzeit Hakochavim [595°]'),
+    'tzeis_5_95_degrees': _('Tzeit Hakochavim [5.95°]'),
     'chatzot_laila': _('Chatzot Halaylah'),
     'astronomical_hour_ma': _('Astronomical Hour [M"A]'),
     'astronomical_hour_gra': _('Astronomical Hour [GR"A]')

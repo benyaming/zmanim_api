@@ -223,9 +223,11 @@ def _yom_tov(
         assert day_2_date.is_assur_bemelacha()
 
     resp = {
-        'params': {'shkiah_offset': cl, 'havdala_opinion': havdala_opinion.value},
         'eve': {'date': eve_date.gregorian_date.isoformat()},
     }
+    if not name == 'pesach_2':
+        resp['params'] = {'shkiah_offset': cl, 'havdala_opinion': havdala_opinion.value}
+
     if shabbat_date and shabbat_date < day_1_date:
         resp['shabbat'] = {'date': shabbat_date.gregorian_date.isoformat()}
 
@@ -262,13 +264,14 @@ def _yom_tov(
     resp['day_1']['candle_lighting'] = eve_zmanim_calc.candle_lighting().isoformat(timespec='minutes')
 
     if not day_2_date:
-        resp['day_1']['havdala'] = first_day_calc.tzais(havdala_params).isoformat(timespec='minutes')
-        return resp
 
-    second_day_calc = ZmanimCalendar(cl, geo_location=location, date=day_2_date.gregorian_date)
-    resp['day_2']['candle_lighting'] = first_day_calc.tzais(havdala_params).isoformat(timespec='minutes')
-    if not shabbat_date or shabbat_date < day_2_date:
-        resp['day_2']['havdala'] = second_day_calc.tzais(havdala_params).isoformat(timespec='minutes')
+        resp['day_1']['havdala'] = first_day_calc.tzais(havdala_params).isoformat(timespec='minutes')
+        # return resp
+    else:
+        second_day_calc = ZmanimCalendar(cl, geo_location=location, date=day_2_date.gregorian_date)
+        resp['day_2']['candle_lighting'] = first_day_calc.tzais(havdala_params).isoformat(timespec='minutes')
+        if not shabbat_date or shabbat_date < day_2_date:
+            resp['day_2']['havdala'] = second_day_calc.tzais(havdala_params).isoformat(timespec='minutes')
 
     if name == 'pesach':
         params = resp.pop('params')

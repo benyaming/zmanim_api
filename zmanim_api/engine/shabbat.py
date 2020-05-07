@@ -4,12 +4,12 @@ from zmanim.util.geo_location import GeoLocation
 from zmanim.zmanim_calendar import ZmanimCalendar
 from zmanim.limudim.calculators.parsha import Parsha
 
+from ..models import Shabbat, Settings
+from ..api_helpers import HavdalaChoises, HAVDALA_PARAMS
+from ..utils import get_next_weekday, get_tz, is_diaspora
 
-from zmanim_api.api_helpers import HavdalaChoises, HAVDALA_PARAMS
-from zmanim_api.utils import get_next_weekday, get_tz, is_diaspora
 
-
-def shabbos(
+def get_shabbat(
         # lang: str,
         lat: float,
         lng: float,
@@ -17,7 +17,7 @@ def shabbos(
         cl_offset: int,
         havdala: HavdalaChoises,
         date_: date
-) -> dict:
+) -> Shabbat:
     # _ = get_translator(lang)
     # 1. get friday nearest to the date
     friday = get_next_weekday(date_, 4)
@@ -34,7 +34,7 @@ def shabbos(
     havdala_time: dt = saturday_calendar.tzais(havdala_params)
     late_cl_warning = False if friday_calendar.alos() else True
 
-    final_data = {
+    data = {
         'torah_part': torah_part,
         'cl': friday_calendar.candle_lighting().isoformat(timespec='minutes'),
         'cl_offset': cl_offset,
@@ -42,5 +42,12 @@ def shabbos(
         'havdala_opinion': havdala.value,
         'late_cl_warning': late_cl_warning
     }
+    settings = Settings(
+        cl_offset=cl_offset,
+        havdala_opinion=havdala,
+        coordinates=(lat, lng),
+        elevation=elevation,
+        date=date_
+    )
 
-    return final_data
+    return Shabbat(settings=settings, **data)

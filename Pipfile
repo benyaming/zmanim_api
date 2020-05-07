@@ -6,7 +6,7 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
-fastapi = "*"
+fastapi = "==0.54.1"
 uvicorn = "*"
 pytz = "*"
 pyluach = "*"

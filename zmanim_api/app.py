@@ -6,17 +6,26 @@ from fastapi.responses import RedirectResponse, JSONResponse
 
 from zmanim_api.api_helpers import (
     LanguageChoises,
-    HolidayChoises,
+    SimpleHolidayChoises,
+    YomTovChoises,
     FastsChoises,
     HavdalaChoises,
-    DATE_PATTERN,
     DateException,
     validate_date_or_get_now
 )
-from zmanim_api.models import ZmanimSettingsModel
+from zmanim_api.models import (
+    ZmanimRequest,
+    ZmanimResponse,
+    Shabbat,
+    RoshChodesh,
+    DafYomi,
+    Holiday,
+    YomTov,
+    Fast
+)
 from zmanim_api.engine.daf_yomi import get_daf_yomi
 from zmanim_api.engine.zmanim_module import get_zmanim
-from zmanim_api.engine.shabbos import shabbos
+from zmanim_api.engine.shabbat import get_shabbat
 from zmanim_api.engine.rosh_chodesh import get_next_rosh_chodesh
 from zmanim_api.engine import holidays as hd
 from zmanim_api import openapi_desctiptions as ds
@@ -51,19 +60,17 @@ async def forward_to_swagger():
     return RedirectResponse(f'{prefix}/docs')
 
 
-@app.post('/zmanim')
+@app.post('/zmanim', response_model=ZmanimResponse, response_model_exclude_none=True)
 async def zmanim(
-        settings: ZmanimSettingsModel,
-        # lang: LanguageChoises = lang_param,
+        settings: ZmanimRequest,
         date: Optional[str] = date_param,
         elevation: float = elevation_param,
         lat: float = lat_param,
         lng: float = lng_param,
-) -> dict:
+) -> ZmanimResponse:
     parsed_date = validate_date_or_get_now(date)
     data = get_zmanim(
-        # lang=lang.value,
-        date=parsed_date,
+        date_=parsed_date,
         lat=lat,
         lng=lng,
         elevation=elevation,
@@ -71,41 +78,47 @@ async def zmanim(
     return data
 
 
-@app.get('/shabbos')
-async def shabos(
+@app.get('/shabbat', response_model=Shabbat, response_model_exclude_none=True)
+async def shabbat(
         cl_offset: int = cl_param,
         lat: float = lat_param,
         lng: float = lng_param,
         elevation: float = elevation_param,
         havdala: HavdalaChoises = havdala_param,
         date: Optional[str] = date_param
-) -> dict:
+) -> Shabbat:
     parsed_date = validate_date_or_get_now(date)
-    data = shabbos(lat, lng, elevation, cl_offset, havdala, parsed_date)
+    data = get_shabbat(lat, lng, elevation, cl_offset, havdala, parsed_date)
     return data
 
 
-@app.get('/rosh_chodesh')
-async def rosh_chodesh(
-        date: Optional[str] = date_param
-) -> dict:
+@app.get('/rosh_chodesh', response_model=RoshChodesh)
+async def rosh_chodesh(date: Optional[str] = date_param) -> RoshChodesh:
     parsed_date = validate_date_or_get_now(date)
     data = get_next_rosh_chodesh(parsed_date)
     return data
 
 
-@app.get('/daf_yomi')
-async def daf_yomi(
-        date: Optional[str] = date_param
-) -> dict:
+@app.get('/daf_yomi', response_model=DafYomi)
+async def daf_yomi(date: Optional[str] = date_param) -> DafYomi:
     parsed_date = validate_date_or_get_now(date)
     data = get_daf_yomi(parsed_date)
     return data
 
 
-@app.get('/holidays')
-async def holidays(
-        holiday_name: HolidayChoises = Query(..., description='select holiday name'),  # todo descr
+@app.get('/holiday', response_model=Holiday)
+async def holiday(
+        holiday_name: SimpleHolidayChoises = Query(..., description='select holiday name'),  # todo descr
+        date: Optional[str] = date_param
+):
+    parsed_date = validate_date_or_get_now(date)
+    resp = hd.get_simple_holiday(name=holiday_name.name, date_=parsed_date)
+    return resp
+
+
+@app.get('/yom_tov', response_model=YomTov, response_model_exclude_none=True)
+async def yom_tov(
+        yomtov_name: YomTovChoises = Query(..., description='select yomtov name'),  # todo descr
         lat: float = lat_param,
         lng: float = lng_param,
         elevation: int = elevation_param,
@@ -114,8 +127,8 @@ async def holidays(
         date: Optional[str] = date_param
 ):
     parsed_date = validate_date_or_get_now(date)
-    resp = hd.holiday(
-        name=holiday_name.name,
+    resp = hd.get_yom_tov(
+        name=yomtov_name.name,
         date_=parsed_date,
         lat=lat,
         lng=lng,
@@ -126,15 +139,15 @@ async def holidays(
     return resp
 
 
-@app.get('/fasts')
-async def fasts(
+@app.get('/fast', response_model=Fast, response_model_exclude_none=True)
+async def fast(
         fast_name: FastsChoises = Query(..., description='Select fast name'),
         lat: float = lat_param,
         lng: float = lng_param,
         elevation: int = elevation_param,
         havdala: HavdalaChoises = havdala_param,
         date: Optional[str] = date_param
-) -> dict:
+) -> Fast:
     parsed_date = validate_date_or_get_now(date)
     data = hd.fast(
         name=fast_name.name,

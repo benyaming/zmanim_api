@@ -1,10 +1,12 @@
-from datetime import date as Date, datetime as dt
+from typing import Dict, Union
+from datetime import date, datetime as dt, time
 
+import arrow
 from zmanim.util.geo_location import GeoLocation
 from zmanim.zmanim_calendar import ZmanimCalendar
 
-from zmanim_api.utils import get_translator, get_tz
-from zmanim_api.models import ZmanimSettingsModel
+from zmanim_api.utils import get_tz
+from zmanim_api.models import ZmanimRequest, ZmanimResponse, Settings
 
 
 _ZMANIM_CALCULATORS = {
@@ -29,7 +31,7 @@ _ZMANIM_CALCULATORS = {
 }
 
 
-def _calculate_zmanim(calendar: ZmanimCalendar, settings: ZmanimSettingsModel) -> dict:
+def _calculate_zmanim(calendar: ZmanimCalendar, settings: ZmanimRequest) -> Dict[str, Union[dt, time]]:
     calculated_zmanim = {}
     for zman_name, required in settings.dict().items():
         if not required:
@@ -45,7 +47,9 @@ def _calculate_zmanim(calendar: ZmanimCalendar, settings: ZmanimSettingsModel) -
             zman_value: dt = getattr(calendar, method_name)()
 
         if isinstance(zman_value, dt):
-            calculated_zmanim[zman_name] = zman_value.strftime('%H:%M')
+            calculated_zmanim[zman_name] = zman_value
+        elif isinstance(zman_value, float):
+            calculated_zmanim[zman_name] = arrow.get(int(zman_value / 1000)).time()
         else:
             calculated_zmanim[zman_name] = zman_value
 
@@ -54,18 +58,18 @@ def _calculate_zmanim(calendar: ZmanimCalendar, settings: ZmanimSettingsModel) -
 
 def get_zmanim(
         # lang: str,
-        date: Date,
+        date_: date,
         lat: float,
         lng: float,
         elevation: float,
-        settings: ZmanimSettingsModel
-) -> dict:
+        settings: ZmanimRequest
+) -> ZmanimResponse:
     # cl?
     # _ = get_translator(lang)
     tz = get_tz(lat, lng)
     
     location = GeoLocation('', lat, lng, tz, elevation)
-    calendar = ZmanimCalendar(geo_location=location, date=date)
+    calendar = ZmanimCalendar(geo_location=location, date=date_)
     zmanim = _calculate_zmanim(calendar, settings)
-    return zmanim
-
+    settings = Settings(date=date_, coordinates=(lat, lng), elevation=elevation)
+    return ZmanimResponse(settings=settings, **zmanim)

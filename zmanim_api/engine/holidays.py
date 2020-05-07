@@ -5,9 +5,9 @@ from zmanim.util.geo_location import GeoLocation
 from zmanim.zmanim_calendar import ZmanimCalendar
 from zmanim.hebrew_calendar.jewish_calendar import JewishCalendar
 
-
-from zmanim_api.utils import get_tz, is_diaspora
-from zmanim_api.api_helpers import HAVDALA_PARAMS, HavdalaChoises
+from ..utils import get_tz, is_diaspora
+from ..api_helpers import HAVDALA_PARAMS, HavdalaChoises
+from ..models import Holiday, YomTov, Fast, SimpleSettings, Settings
 
 
 HOLYDAYS_AND_FASTS_DATES = {
@@ -57,7 +57,7 @@ LONG_HOLYDAYS = {
 }
 
 
-def _get_first_day_date(name: str, date_: date, diaspora: bool) -> JewishCalendar:
+def _get_first_day_date(name: str, date_: date, diaspora: bool = True) -> JewishCalendar:
     day, month = HOLYDAYS_AND_FASTS_DATES[name]
 
     now = JewishCalendar(date_)
@@ -125,68 +125,63 @@ def fast(
         lng: Optional[float],
         elevation: int,
         havdala_opinion: HavdalaChoises
-) -> dict:
+) -> Fast:
     tz = get_tz(lat, lng)
     diaspora = is_diaspora(tz)
     is_9_av = True if name == 'fast_9_av' else None
     havdala_params = HAVDALA_PARAMS[havdala_opinion.name]
 
-    resp = {}
+    data = {}
 
     fast_date = _get_first_day_date(name, date_, diaspora)
     location = GeoLocation('', lat, lng, tz, elevation)
     fast_calc = ZmanimCalendar(geo_location=location, date=fast_date.gregorian_date)
     if is_9_av:
         eve_calc = ZmanimCalendar(geo_location=location, date=(fast_date - 1).gregorian_date)
-        resp['fast_start'] = eve_calc.shkia().isoformat(timespec='minutes')
-        resp['chatzot'] = fast_calc.chatzos().isoformat(timespec='minutes')
+        data['fast_start'] = eve_calc.shkia()
+        data['chatzot'] = fast_calc.chatzos()
     else:
         if fast_calc.alos():
-            resp['fast_start'] = fast_calc.alos().isoformat(timespec='minutes')
+            data['fast_start'] = fast_calc.alos()
         else:
             eve_calc = ZmanimCalendar(geo_location=location, date=(fast_date - 1).gregorian_date)
-            resp['fast_start'] = (eve_calc.chatzos() + timedelta(hours=12)).isoformat(timespec='minutes')
+            data['fast_start'] = eve_calc.chatzos() + timedelta(hours=12)
 
     # calculate additional fast ending times:
-    sunset = fast_calc.shkia()
-    sba_time = (sunset + timedelta(minutes=31)).isoformat(timespec='minutes')
-    nvr_time = (sunset + timedelta(minutes=28)).isoformat(timespec='minutes')
-    ssk_time = (sunset + timedelta(minutes=25)).isoformat(timespec='minutes')
+    # sunset = fast_calc.shkia()
+    # sba_time = (sunset + timedelta(minutes=31))
+    # nvr_time = (sunset + timedelta(minutes=28))
+    # ssk_time = (sunset + timedelta(minutes=25))
 
-    resp['fast_end'] = {
-        'havdala': fast_calc.tzais(havdala_params).isoformat(timespec='minutes'),
-        'sefer_ben_a-shmashot': sba_time,
-        'nevareshet': nvr_time,
-        'shmirat_shabbat_keilhotah': ssk_time
-    }
+    data['havdala'] = fast_calc.tzais(havdala_params)
 
-    return resp
+    settings = Settings(
+        havdala_opinion=havdala_opinion,
+        coordinates=(lat, lng),
+        elevation=elevation,
+        date=date_
+    )
 
-
-def _regular_holiday(name: str, date_: date, diaspora: bool) -> Union[dict, list]:
-    dates = []
-    resp = {'holiday': name, 'dates': dates}
-
-    calendar = _get_first_day_date(name, date_, diaspora)
-    dates.append(calendar.gregorian_date.isoformat())
-
-    if name == 'chanukah':
-        calendar.forward(7)
-        dates.append(calendar.gregorian_date.isoformat())
-
-    return resp
+    return Fast(settings=settings, **data)
 
 
-def _yom_tov(
+def get_simple_holiday(name: str, date_: date) -> Holiday:
+    holiday_date = _get_first_day_date(name, date_).gregorian_date
+    data = {'holiday': name, 'date': holiday_date}
+
+    settings = SimpleSettings(date=date_)
+    return Holiday(settings=settings, **data)
+
+
+def get_yom_tov(
         name: str,
         date_: date,
         lat: float,
         lng: float,
         elevation: int,
-        diaspora: bool,
         cl: int,
         havdala_opinion: HavdalaChoises
-) -> dict:
+) -> YomTov:
     """
     There are different holiday dates sets:
     [Y] - one yom tov — Generic yom tov in Israel
@@ -196,6 +191,8 @@ def _yom_tov(
     [Y S]
     [Y Y S]
     """
+    tz = get_tz(lat, lng)
+    diaspora = is_diaspora(tz)
     day_1_date = _get_first_day_date(name, date_, diaspora)
 
     shabbat_date = None
@@ -222,30 +219,27 @@ def _yom_tov(
         assert day_2_date.is_yom_tov_sheni()
         assert day_2_date.is_assur_bemelacha()
 
-    resp = {}
-    resp['eve'] = eve_date.gregorian_date.isoformat()
-    if not name == 'pesach_2':
-        resp['params'] = {'shkiah_offset': cl, 'havdala_opinion': havdala_opinion.value}
+    data = {}
+    data['eve'] = eve_date.gregorian_date
 
     if shabbat_date and shabbat_date < day_1_date:
-        resp['shabbat'] = {'date': shabbat_date.gregorian_date.isoformat()}
+        data['shabbat'] = {'date': shabbat_date.gregorian_date}
 
-    resp['day_1'] = {'date': day_1_date.gregorian_date.isoformat()}
+    data['day_1'] = {'date': day_1_date.gregorian_date}
 
     if day_2_date:
-        resp['day_2'] = {'date': day_2_date.gregorian_date.isoformat()}
+        data['day_2'] = {'date': day_2_date.gregorian_date}
 
     if shabbat_date and shabbat_date > last_yt_date:
-        resp['shabbat'] = {'date': shabbat_date.gregorian_date.isoformat()}
+        data['shabbat'] = {'date': shabbat_date.gregorian_date}
 
     if name == 'succot':
         date_hoshana_rabba = day_1_date + 6
-        resp['hoshana_rabba'] = date_hoshana_rabba.gregorian_date.isoformat()
+        data['hoshana_rabba'] = date_hoshana_rabba.gregorian_date
 
     # zmanim calculation
     havdala_params = HAVDALA_PARAMS[havdala_opinion.name]
 
-    tz = get_tz(lat, lng)
     location = GeoLocation('', lat, lng, tz, elevation)
 
     eve_zmanim_calc = ZmanimCalendar(cl, geo_location=location, date=eve_date.gregorian_date)
@@ -255,66 +249,38 @@ def _yom_tov(
         shabbat_eve_date = shabbat_date - 1
         eve_shabbat_calc = ZmanimCalendar(cl, geo_location=location, date=shabbat_eve_date.gregorian_date)
         shabbat_calc = ZmanimCalendar(cl, geo_location=location, date=shabbat_date.gregorian_date)
-        resp['shabbat']['candle_lighting'] = eve_shabbat_calc.candle_lighting().isoformat(timespec='minutes')
+        data['shabbat']['candle_lighting'] = eve_shabbat_calc.candle_lighting()
 
         if shabbat_date > day_1_date:
-            resp['shabbat']['havdala'] = shabbat_calc.tzais(havdala_params).isoformat(timespec='minutes')
+            data['shabbat']['havdala'] = shabbat_calc.tzais(havdala_params)
 
-    resp['day_1']['candle_lighting'] = eve_zmanim_calc.candle_lighting().isoformat(timespec='minutes')
+    data['day_1']['candle_lighting'] = eve_zmanim_calc.candle_lighting()
 
     if not day_2_date:
 
-        resp['day_1']['havdala'] = first_day_calc.tzais(havdala_params).isoformat(timespec='minutes')
+        data['day_1']['havdala'] = first_day_calc.tzais(havdala_params)
         # return resp
     else:
         second_day_calc = ZmanimCalendar(cl, geo_location=location, date=day_2_date.gregorian_date)
-        resp['day_2']['candle_lighting'] = first_day_calc.tzais(havdala_params).isoformat(timespec='minutes')
+        data['day_2']['candle_lighting'] = first_day_calc.tzais(havdala_params)
         if not shabbat_date or shabbat_date < day_2_date:
-            resp['day_2']['havdala'] = second_day_calc.tzais(havdala_params).isoformat(timespec='minutes')
+            data['day_2']['havdala'] = second_day_calc.tzais(havdala_params)
 
+    part_2_data = {}
     if name == 'pesach':
-        params = resp.pop('params')
-        part_2 = _yom_tov('pesach_2', date_, lat, lng, elevation, diaspora, cl, havdala_opinion)
-        resp = {
-            'params': params,
-            'part_1': resp,
-            'part_2': part_2
+        part_2 = get_yom_tov('pesach_2', date_, lat, lng, elevation, cl, havdala_opinion)
+        part_2_data = {
+            'pesach_part_2_eve': part_2.eve,
+            'pesach_part_2_day_1': part_2.day_1,
+            'pesach_part_2_day_2': part_2.day_2,
+            'pesach_part_2_shabbat': part_2.shabbat
         }
 
-    return resp
-
-
-def holiday(
-        name: str,
-        date_: date,
-        lat: Optional[float],
-        lng: Optional[float],
-        elevation: int,
-        cl: int,
-        havdala_opinion: HavdalaChoises
-) -> dict:
-    diaspora = is_diaspora(get_tz(lat, lng))
-
-    if name in NON_YOM_TOV_HOLYDAYS:
-        resp = _regular_holiday(name, date_, diaspora)
-    else:
-        resp = _yom_tov(
-            name=name,
-            date_=date_,
-            lat=lat,
-            lng=lng,
-            elevation=elevation,
-            diaspora=diaspora,
-            cl=cl,
-            havdala_opinion=havdala_opinion
-        )
-    return resp
-
-
-# r = holiday('yom_kippur', date(2020, 3, 1), 55.35, 37.56, 0, 18, 'tzeis_850_degrees')
-# for i in r:
-#     print(i, r[i])
-
-# r = fast('fast_gedalia', date(2020, 3, 1), 55.35, 37.56, 0, HavdalaChoises.tzeis_8_5_degrees)
-# for i in r:
-#     print(i, r[i])
+    settings = Settings(
+        cl_offset=cl,
+        havdala_opinion=havdala_opinion,
+        coordinates=(lat, lng),
+        elevation=elevation,
+        date=date_
+    )
+    return YomTov(settings=settings, **data, **part_2_data)

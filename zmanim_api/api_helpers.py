@@ -16,23 +16,26 @@ class LanguageChoises(Enum):
     ru = 'ru'
 
 
-class HolidayChoises(Enum):
-    rosh_hashana = 'rosh_hashana'
-    yom_kippur = 'yom_kippur'
-    succot = 'succot'
-    shmini_atzeres = 'shmini_atzeres'
+class SimpleHolidayChoises(Enum):
     chanukah = 'chanukah'
     tu_bi_shvat = 'tu_bi_shvat'
     purim = 'purim'
-    pesach = 'pesach'
     lag_baomer = 'lag_baomer'
-    shavuot = 'shavuot'
     tu_be_av = 'tu_be_av'
     israel_holidays = 'israel_holidays'
     yom_hashoah = 'yom_hashoah'
     yom_hazikaron = 'yom_hazikaron'
     yom_haatzmaut = 'yom_haatzmaut'
     yom_yerushalaim = 'yom_yerushalaim'
+
+
+class YomTovChoises(Enum):
+    rosh_hashana = 'rosh_hashana'
+    yom_kippur = 'yom_kippur'
+    succot = 'succot'
+    shmini_atzeres = 'shmini_atzeres'
+    pesach = 'pesach'
+    shavuot = 'shavuot'
 
 
 class FastsChoises(str, Enum):

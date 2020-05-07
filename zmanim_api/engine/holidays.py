@@ -222,9 +222,8 @@ def _yom_tov(
         assert day_2_date.is_yom_tov_sheni()
         assert day_2_date.is_assur_bemelacha()
 
-    resp = {
-        'eve': {'date': eve_date.gregorian_date.isoformat()},
-    }
+    resp = {}
+    resp['eve'] = eve_date.gregorian_date.isoformat()
     if not name == 'pesach_2':
         resp['params'] = {'shkiah_offset': cl, 'havdala_opinion': havdala_opinion.value}
 

@@ -65,7 +65,7 @@ class ZmanimResponse(BaseModel):
 
 class AsurBeMelachaDay(BaseModel):
     date: Optional[date] = None
-    cl: Optional[datetime] = None
+    candle_lighting: Optional[datetime] = None
     havdala: Optional[datetime] = None
 
 
@@ -105,6 +105,7 @@ class YomTov(BaseModel):
     day_1: AsurBeMelachaDay
     day_2: Optional[AsurBeMelachaDay] = None
     shabbat: Optional[AsurBeMelachaDay] = None
+    hoshana_rabba: Optional[date] = None
 
     pesach_part_2_eve: Optional[date] = None
     pesach_part_2_day_1: Optional[AsurBeMelachaDay] = None

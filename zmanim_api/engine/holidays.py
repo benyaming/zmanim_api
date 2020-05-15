@@ -159,7 +159,8 @@ def fast(
         havdala_opinion=havdala_opinion,
         coordinates=(lat, lng),
         elevation=elevation,
-        date=date_
+        date=date_,
+        fast_name=name
     )
 
     return Fast(settings=settings, **data)
@@ -169,7 +170,7 @@ def get_simple_holiday(name: str, date_: date) -> Holiday:
     holiday_date = _get_first_day_date(name, date_).gregorian_date
     data = {'holiday': name, 'date': holiday_date}
 
-    settings = SimpleSettings(date=date_)
+    settings = SimpleSettings(date=date_, holiday_name=name)
     return Holiday(settings=settings, **data)
 
 
@@ -281,6 +282,7 @@ def get_yom_tov(
         havdala_opinion=havdala_opinion,
         coordinates=(lat, lng),
         elevation=elevation,
-        date=date_
+        date=date_,
+        yomtov_name=name
     )
     return YomTov(settings=settings, **data, **part_2_data)

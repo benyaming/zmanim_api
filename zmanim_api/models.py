@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 class SimpleSettings(BaseModel):
     date_: Optional[date] = None
+    holiday_name: Optional[str] = None
 
     class Config:
         fields = {'date_': 'date'}
@@ -16,6 +17,8 @@ class Settings(SimpleSettings):
     havdala_opinion: Optional[str] = None
     coordinates: Optional[Tuple[float, float]] = None
     elevation: Optional[int] = None
+    fast_name: Optional[str] = None
+    yomtov_name: Optional[str] = None
 
 
 class ZmanimRequest(BaseModel):

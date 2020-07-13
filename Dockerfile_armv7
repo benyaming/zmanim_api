@@ -1,7 +1,7 @@
 FROM python:3.7.8-slim
 
 RUN pip install pipenv
-RUN apt update && apt --yes install python3-dev
+RUN apt update && apt --yes install python3-dev git
 ENV MULTIDICT_NO_EXTENSIONS=1
 WORKDIR /home/app
 COPY . .

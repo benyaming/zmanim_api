@@ -1,4 +1,6 @@
+import logging
 from typing import Optional
+from os import getenv
 
 import uvicorn
 from fastapi import FastAPI, Query, Request
@@ -11,7 +13,8 @@ from zmanim_api.api_helpers import (
     FastsChoises,
     HavdalaChoises,
     DateException,
-    validate_date_or_get_now
+    validate_date_or_get_now,
+    validate_datetime_or_get_now
 )
 from zmanim_api.models import (
     ZmanimRequest,
@@ -21,27 +24,35 @@ from zmanim_api.models import (
     DafYomi,
     Holiday,
     YomTov,
-    Fast
+    Fast,
+    BooleanResp
 )
 from zmanim_api.engine.daf_yomi import get_daf_yomi
-from zmanim_api.engine.zmanim_module import get_zmanim
+from zmanim_api.engine.zmanim_module import get_zmanim, is_asur_bemelaha
 from zmanim_api.engine.shabbat import get_shabbat
 from zmanim_api.engine.rosh_chodesh import get_next_rosh_chodesh
 from zmanim_api.engine import holidays as hd
 from zmanim_api import openapi_desctiptions as ds
 from zmanim_api.settings import ROOT_PATH
+from better_exceptions import logger, UVICORN_LOG_CONFIG
 
 
-app = FastAPI(openapi_prefix=f'/{ROOT_PATH}')
+app = FastAPI(openapi_prefix=f'/{ROOT_PATH}', docs_url='/')
 
 
 lang_param = Query(LanguageChoises.en, description=ds.lang)
 cl_param = Query(18, description='qwerrt', ge=0, lt=100)
 date_param = Query(None, description=ds.date)
+dt_param = Query(None, description=ds.dt)
 lat_param = Query(32.09, description=ds.lat, ge=-90, le=90)
 lng_param = Query(34.86, description=ds.lng, ge=-180, le=180)
 elevation_param = Query(0, description='', ge=0)
 havdala_param = Query(HavdalaChoises.tzeis_8_5_degrees, description='tzeit')
+
+
+@app.on_event('startup')
+async def on_start():
+    logger.info('STARTING ZMANIM API...')
 
 
 @app.exception_handler(DateException)
@@ -52,12 +63,6 @@ async def date_exception_handler(request: Request, exc: DateException):
             'message': f'Invalid date provided! {exc}'
         }
     )
-
-
-@app.get('/')
-async def forward_to_swagger():
-    prefix = f'/{ROOT_PATH}' if ROOT_PATH else ''
-    return RedirectResponse(f'{prefix}/docs')
 
 
 @app.post('/zmanim', response_model=ZmanimResponse, response_model_exclude_none=True)
@@ -160,8 +165,26 @@ async def fast(
     return data
 
 
+@app.get('/is_asur_bemelacha', response_model=BooleanResp)
+async def is_asur_bemelacha(
+        lat: float = lat_param,
+        lng: float = lng_param,
+        elevation: int = elevation_param,
+        dt: Optional[str] = dt_param
+) -> BooleanResp:
+    parsed_dt = validate_datetime_or_get_now(dt)
+    resp = is_asur_bemelaha(parsed_dt, lat, lng, elevation)
+    return resp
+
+
 if __name__ == '__main__':
-    uvicorn.run(app, port=2000, use_colors=True)
+    uvicorn.run(
+        app,
+        host='0.0.0.0' if getenv('DOCKER_MODE') else '127.0.0.1',
+        port=8000,
+        use_colors=True,
+        log_level=logging.DEBUG
+    )
 
 # todo return zmanim calculation errors
 

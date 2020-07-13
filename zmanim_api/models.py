@@ -118,3 +118,7 @@ class Fast(BaseModel):
     fast_start: Optional[datetime] = None
     chatzot: Optional[datetime] = None
     havdala: Optional[datetime] = None
+
+
+class BooleanResp(BaseModel):
+    result: bool

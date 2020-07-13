@@ -2,11 +2,12 @@ from typing import Dict, Union
 from datetime import date, datetime as dt, time
 
 import arrow
+import pytz
 from zmanim.util.geo_location import GeoLocation
 from zmanim.zmanim_calendar import ZmanimCalendar
 
-from zmanim_api.utils import get_tz
-from zmanim_api.models import ZmanimRequest, ZmanimResponse, Settings
+from zmanim_api.utils import get_tz, is_diaspora
+from zmanim_api.models import ZmanimRequest, ZmanimResponse, Settings, BooleanResp
 
 
 _ZMANIM_CALCULATORS = {
@@ -73,3 +74,21 @@ def get_zmanim(
     zmanim = _calculate_zmanim(calendar, settings)
     settings = Settings(date=date_, coordinates=(lat, lng), elevation=elevation)
     return ZmanimResponse(settings=settings, **zmanim)
+
+
+def is_asur_bemelaha(
+        dt_: dt,
+        lat: float,
+        lng: float,
+        elevation: float
+) -> BooleanResp:
+    # todo add tzeis option
+    tz = get_tz(lat, lng)
+    is_israel = not is_diaspora(tz)
+
+    location = GeoLocation('', lat, lng, tz, elevation)
+    calendar = ZmanimCalendar(geo_location=location, date=dt_.date())
+
+    dt_ = dt_.astimezone(pytz.timezone(tz))
+    resp = calendar.is_assur_bemelacha(current_time=dt_, in_israel=is_israel)
+    return BooleanResp(result=resp)

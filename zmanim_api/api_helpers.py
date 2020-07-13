@@ -1,7 +1,6 @@
 from enum import Enum
 from typing import Optional
-from datetime import date
-
+from datetime import date, datetime
 
 DATE_PATTERN = r'^\d{1,2}\/\d{1,2}\/\d{1,4}$'
 DATE_FORMAT = '%d/%m/%Y'
@@ -69,4 +68,15 @@ def validate_date_or_get_now(date_: Optional[str]) -> date:
             raise DateException(e)
     else:
         response = date.today()
+    return response
+
+
+def validate_datetime_or_get_now(dt: Optional[str]) -> datetime:
+    if dt:
+        try:
+            response = datetime.fromisoformat(dt)
+        except ValueError as e:
+            raise DateException(e)
+    else:
+        response = datetime.now()
     return response

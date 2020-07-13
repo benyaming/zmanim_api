@@ -14,6 +14,7 @@ arrow = "*"
 timezonefinder = "*"
 zmanim = {git = "https://github.com/pinnymz/python-zmanim.git"}
 aiohttp = "*"
+julian = "*"
 
 [requires]
 python_version = "3.7"

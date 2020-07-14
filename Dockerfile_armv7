@@ -1,7 +1,6 @@
-FROM python:3.7.8-slim
+FROM python:3.7@sha256:e787940d001549285ebb7fd2cbe4be4e6e8550bfa7d4e3e895b163435f1e8465
 
 RUN pip install pipenv
-RUN apt update && apt --yes install python3-dev git
 ENV MULTIDICT_NO_EXTENSIONS=1
 WORKDIR /home/app
 COPY . .

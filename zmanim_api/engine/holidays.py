@@ -221,10 +221,10 @@ def get_yom_tov(
         assert day_2_date.is_assur_bemelacha()
 
     data = {}
-    data['eve'] = eve_date.gregorian_date
+    shabbat_term = 'pre_shabbat'
 
     if shabbat_date and shabbat_date < day_1_date:
-        data['shabbat'] = {'date': shabbat_date.gregorian_date}
+        data[shabbat_term] = {'date': shabbat_date.gregorian_date}
 
     data['day_1'] = {'date': day_1_date.gregorian_date}
 
@@ -232,7 +232,8 @@ def get_yom_tov(
         data['day_2'] = {'date': day_2_date.gregorian_date}
 
     if shabbat_date and shabbat_date > last_yt_date:
-        data['shabbat'] = {'date': shabbat_date.gregorian_date}
+        shabbat_term = 'post_shabbat'
+        data[shabbat_term] = {'date': shabbat_date.gregorian_date}
 
     if name == 'succot':
         date_hoshana_rabba = day_1_date + 6
@@ -250,10 +251,10 @@ def get_yom_tov(
         shabbat_eve_date = shabbat_date - 1
         eve_shabbat_calc = ZmanimCalendar(cl, geo_location=location, date=shabbat_eve_date.gregorian_date)
         shabbat_calc = ZmanimCalendar(cl, geo_location=location, date=shabbat_date.gregorian_date)
-        data['shabbat']['candle_lighting'] = eve_shabbat_calc.candle_lighting()
+        data[shabbat_term]['candle_lighting'] = eve_shabbat_calc.candle_lighting()
 
         if shabbat_date > day_1_date:
-            data['shabbat']['havdala'] = shabbat_calc.tzais(havdala_params)
+            data[shabbat_term]['havdala'] = shabbat_calc.tzais(havdala_params)
 
     data['day_1']['candle_lighting'] = eve_zmanim_calc.candle_lighting()
 
@@ -271,10 +272,8 @@ def get_yom_tov(
     if name == 'pesach':
         part_2 = get_yom_tov('pesach_2', date_, lat, lng, elevation, cl, havdala_opinion)
         part_2_data = {
-            'pesach_part_2_eve': part_2.eve,
             'pesach_part_2_day_1': part_2.day_1,
             'pesach_part_2_day_2': part_2.day_2,
-            'pesach_part_2_shabbat': part_2.shabbat
         }
 
     settings = Settings(

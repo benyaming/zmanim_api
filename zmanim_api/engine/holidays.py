@@ -205,10 +205,10 @@ def get_yom_tov(
         day_2_date = day_1_date + 1
         # yt_dates.append(first_day + 1)
 
-    last_yt_date = day_1_date if not day_2_date else day_2_date
+    last_yt_date = day_2_date or day_1_date
 
     if day_1_date.day_of_week == 1:  # S Y Y
-        eve_date = day_1_date - 2
+        # eve_date = day_1_date - 2
         shabbat_date = day_1_date - 1
     elif last_yt_date.day_of_week == 6:  # Y S / Y Y S
         shabbat_date = last_yt_date + 1
@@ -221,9 +221,10 @@ def get_yom_tov(
         assert day_2_date.is_assur_bemelacha()
 
     data = {}
-    shabbat_term = 'pre_shabbat'
+    shabbat_term = None
 
     if shabbat_date and shabbat_date < day_1_date:
+        shabbat_term = 'pre_shabbat'
         data[shabbat_term] = {'date': shabbat_date.gregorian_date}
 
     data['day_1'] = {'date': day_1_date.gregorian_date}
@@ -256,7 +257,10 @@ def get_yom_tov(
         if shabbat_date > day_1_date:
             data[shabbat_term]['havdala'] = shabbat_calc.tzais(havdala_params)
 
-    data['day_1']['candle_lighting'] = eve_zmanim_calc.candle_lighting()
+    if shabbat_term == 'pre_shabbat':
+        data['day_1']['candle_lighting'] = eve_zmanim_calc.tzais(havdala_params)
+    else:
+        data['day_1']['candle_lighting'] = eve_zmanim_calc.candle_lighting()
 
     if not day_2_date:
 

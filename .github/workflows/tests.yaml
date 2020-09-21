@@ -1,0 +1,21 @@
+name: Zmanim Api Tests
+
+on:
+   pull_request:
+     branches:
+       - master
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.7'
+      - uses: dschep/install-pipenv-action@v1
+      - name: Install requirements
+        run: pipenv install --dev
+      - name: Run tests
+        run: pipenv run tests

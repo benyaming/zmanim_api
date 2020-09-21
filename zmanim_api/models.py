@@ -1,6 +1,6 @@
 from __future__ import annotations
 from datetime import datetime, time, date
-from typing import List, Optional, Tuple, ForwardRef
+from typing import List, Optional, Tuple
 from pydantic import BaseModel
 
 

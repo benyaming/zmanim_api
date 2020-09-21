@@ -97,14 +97,14 @@ async def shabbat(
     return data
 
 
-@app.get('/rosh_chodesh', response_model=RoshChodesh)
+@app.get('/rosh_chodesh', response_model=RoshChodesh, response_model_exclude_none=True)
 async def rosh_chodesh(date: Optional[str] = date_param) -> RoshChodesh:
     parsed_date = validate_date_or_get_now(date)
     data = get_next_rosh_chodesh(parsed_date)
     return data
 
 
-@app.get('/daf_yomi', response_model=DafYomi)
+@app.get('/daf_yomi', response_model=DafYomi, response_model_exclude_none=True)
 async def daf_yomi(date: Optional[str] = date_param) -> DafYomi:
     parsed_date = validate_date_or_get_now(date)
     data = get_daf_yomi(parsed_date)

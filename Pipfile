@@ -4,18 +4,23 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+pytest = "*"
+requests = "*"
 
 [packages]
 fastapi = "*"
-pydantic = '==1.6'
+pydantic = '*'
 uvicorn = "*"
 pytz = "*"
-pyluach = "*"
 arrow = "*"
 timezonefinder = "*"
 zmanim = {git = "https://github.com/pinnymz/python-zmanim.git"}
 aiohttp = "*"
 julian = "*"
+pytest = "*"
 
 [requires]
 python_version = "3.7"
+
+[scripts]
+tests = "pytest -v test/"

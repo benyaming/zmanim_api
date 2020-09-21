@@ -2,7 +2,6 @@ from gettext import translation as tr
 from datetime import datetime as dt, date, timedelta
 
 from timezonefinder import TimezoneFinder
-from pyluach.hebrewcal import HebrewDate
 
 from zmanim_api.settings import I18N_DOMAIN
 

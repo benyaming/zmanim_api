@@ -18,4 +18,8 @@ jobs:
       - name: Install requirements
         run: pipenv install --dev
       - name: Run tests
-        run: pipenv run tests
+        run: |
+          pipenv run tests
+          pipenv run xml
+      - name: Codecov upload
+        run: bash <(curl -s https://codecov.io/bash)

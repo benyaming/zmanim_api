@@ -6,6 +6,7 @@ verify_ssl = true
 [dev-packages]
 pytest = "*"
 requests = "*"
+coverage = "*"
 
 [packages]
 fastapi = "*"
@@ -23,4 +24,5 @@ pytest = "*"
 python_version = "3.7"
 
 [scripts]
-tests = "pytest -v test/"
+tests = "coverage run -m pytest -v test/"
+xml = "coverage xml"

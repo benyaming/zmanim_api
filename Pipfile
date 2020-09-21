@@ -25,3 +25,4 @@ python_version = "3.7"
 
 [scripts]
 tests = "coverage run -m pytest -v test/"
+xml = "coverage xml"

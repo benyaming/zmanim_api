@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 class SimpleSettings(BaseModel):
     date_: Optional[date] = None
+    jewish_date: Optional[str] = None
     holiday_name: Optional[str] = None
 
     class Config:

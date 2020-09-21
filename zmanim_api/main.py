@@ -4,7 +4,7 @@ from os import getenv
 
 import uvicorn
 from fastapi import FastAPI, Query, Request
-from fastapi.responses import RedirectResponse, JSONResponse
+from fastapi.responses import JSONResponse
 
 from zmanim_api.api_helpers import (
     LanguageChoises,
@@ -34,7 +34,7 @@ from zmanim_api.engine.rosh_chodesh import get_next_rosh_chodesh
 from zmanim_api.engine import holidays as hd
 from zmanim_api import openapi_desctiptions as ds
 from zmanim_api.settings import ROOT_PATH
-from better_exceptions import logger, UVICORN_LOG_CONFIG
+from better_exceptions import logger
 
 
 app = FastAPI(openapi_prefix=f'/{ROOT_PATH}', docs_url='/')

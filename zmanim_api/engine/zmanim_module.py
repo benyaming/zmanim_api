@@ -5,6 +5,7 @@ import arrow
 import pytz
 from zmanim.util.geo_location import GeoLocation
 from zmanim.zmanim_calendar import ZmanimCalendar
+from zmanim.hebrew_calendar.jewish_date import JewishDate
 
 from zmanim_api.utils import get_tz, is_diaspora
 from zmanim_api.models import ZmanimRequest, ZmanimResponse, Settings, BooleanResp
@@ -58,21 +59,22 @@ def _calculate_zmanim(calendar: ZmanimCalendar, settings: ZmanimRequest) -> Dict
 
 
 def get_zmanim(
-        # lang: str,
         date_: date,
         lat: float,
         lng: float,
         elevation: float,
         settings: ZmanimRequest
 ) -> ZmanimResponse:
-    # cl?
-    # _ = get_translator(lang)
     tz = get_tz(lat, lng)
+
+    jewish_date = JewishDate(date_).jewish_date
+    jewish_date = f'{jewish_date[0]}-{jewish_date[1]}-{jewish_date[2]}'
     
     location = GeoLocation('', lat, lng, tz, elevation)
     calendar = ZmanimCalendar(geo_location=location, date=date_)
     zmanim = _calculate_zmanim(calendar, settings)
-    settings = Settings(date=date_, coordinates=(lat, lng), elevation=elevation)
+
+    settings = Settings(date=date_, coordinates=(lat, lng), elevation=elevation, jewish_date=jewish_date)
     return ZmanimResponse(settings=settings, **zmanim)
 
 

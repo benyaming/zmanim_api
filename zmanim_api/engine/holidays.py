@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Optional
 from datetime import date, timedelta
 
 from zmanim.util.geo_location import GeoLocation

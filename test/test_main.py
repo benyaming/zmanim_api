@@ -1,17 +1,7 @@
 from fastapi.testclient import TestClient
 
 from zmanim_api.main import app
-
-GEO_DATE_PARAMS = {
-    'date': '2020-04-15',
-    'elevation': 0,
-    'lat': 32.09,
-    'lng': 34.86
-}
-ASUR_BEMELACHA_PARAMS = {
-    'cl_offset': 18,
-    'havdala': 'tzeis_8_5_degrees'
-}
+from .consts import GEO_DATE_PARAMS, ASUR_BEMELACHA_PARAMS, DATE, HAVDALA
 
 client = TestClient(app)
 
@@ -104,7 +94,7 @@ def test_shabbat_endpoint():
 
 
 def test_rosh_chodesh_endpoint():
-    params = {'date': GEO_DATE_PARAMS['date']}
+    params = {'date': DATE}
     expected = {
         'settings': {
             'date': '2020-04-15'
@@ -142,7 +132,7 @@ def test_daf_yomi_endpoint():
 def test_holiday_endpoint():
     params = {
         'holiday_name': 'purim',
-        'date': GEO_DATE_PARAMS['date']
+        'date': DATE
     }
     expected = {
         "settings": {
@@ -193,7 +183,7 @@ def test_yomtov_endpoint():
 def test_fast_endpoint():
     params = {
         **GEO_DATE_PARAMS,
-        'havdala': ASUR_BEMELACHA_PARAMS['havdala'],
+        'havdala': HAVDALA,
         'fast_name': 'fast_gedalia'
     }
     expected = {

@@ -117,7 +117,7 @@ class YomTov(BaseModel):
 
 class Fast(BaseModel):
     settings: Settings
-    fast_deferred: Optional[bool] = False
+    moved_fast: Optional[bool] = False
     fast_start: Optional[datetime] = None
     chatzot: Optional[datetime] = None
     havdala: Optional[datetime] = None

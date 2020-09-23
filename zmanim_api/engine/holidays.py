@@ -74,7 +74,7 @@ def _get_first_day_date(name: str, date_: date, diaspora: bool = True) -> Jewish
         calendar = JewishCalendar.from_jewish_date(calendar.jewish_year + 1, month, day)
 
     if month == 12 and calendar.is_jewish_leap_year():
-        calendar.forward(29)
+        calendar.forward(30)
 
     # if yom hashoa felt on friday, moove it to thursday
     if name == 'yom_hashoah' and calendar.day_of_week == 6:
@@ -131,9 +131,18 @@ def fast(
     is_9_av = True if name == 'fast_9_av' else None
     havdala_params = HAVDALA_PARAMS[havdala_opinion.name]
 
-    data = {}
+    data = {'moved_fast': False}
 
     fast_date = _get_first_day_date(name, date_, diaspora)
+
+    # Deferred fasts
+    if name in ('fast_gedalia', 'fast_17_tammuz', 'fast_9_av') and fast_date.day_of_week == 7:
+        fast_date.forward(1)
+        data['moved_fast'] = True
+    if name == 'fast_esther' and fast_date.day_of_week == 7:
+        fast_date.forward(-2)
+        data['moved_fast'] = True
+
     location = GeoLocation('', lat, lng, tz, elevation)
     fast_calc = ZmanimCalendar(geo_location=location, date=fast_date.gregorian_date)
     if is_9_av:

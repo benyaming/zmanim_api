@@ -197,7 +197,7 @@ def test_fast_endpoint():
             'elevation': 0,
             'fast_name': 'fast_gedalia'
         },
-        'fast_deferred': False,
+        'moved_fast': False,
         'fast_start': '2020-09-21T05:15:41.082623+03:00',
         'havdala': '2020-09-21T19:14:29.657488+03:00'
     }

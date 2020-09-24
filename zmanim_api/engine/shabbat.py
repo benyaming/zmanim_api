@@ -2,6 +2,7 @@ from datetime import datetime as dt, timedelta, date
 
 from zmanim.util.geo_location import GeoLocation
 from zmanim.zmanim_calendar import ZmanimCalendar
+from zmanim.hebrew_calendar.jewish_calendar import JewishCalendar
 from zmanim.limudim.calculators.parsha import Parsha
 
 from ..models import Shabbat, Settings
@@ -25,14 +26,20 @@ def get_shabbat(
 
     tz = get_tz(lat, lng)
     location = GeoLocation('', lat, lng, tz, elevation)
+
     friday_calendar = ZmanimCalendar(candle_lighting_offset=cl_offset, geo_location=location, date=friday)
     saturday_calendar = ZmanimCalendar(candle_lighting_offset=cl_offset, geo_location=location, date=saturday)
-    torah_part = Parsha(in_israel=not is_diaspora(tz)).limud(saturday).description()
 
     havdala_params = HAVDALA_PARAMS[havdala.name]
 
     havdala_time: dt = saturday_calendar.tzais(havdala_params)
     late_cl_warning = False if friday_calendar.alos() else True
+
+    jewish_calendar = JewishCalendar(saturday, in_israel=not is_diaspora(tz))
+    if jewish_calendar.is_yom_tov_assur_bemelacha() or jewish_calendar.is_chol_hamoed():
+        torah_part = jewish_calendar.significant_day()
+    else:
+        torah_part = Parsha(in_israel=not is_diaspora(tz)).limud(saturday).description()
 
     data = {
         'torah_part': torah_part,

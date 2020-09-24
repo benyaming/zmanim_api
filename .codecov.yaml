@@ -1,0 +1,4 @@
+codecov:
+
+ignore:
+  - "better_exceptions.py"

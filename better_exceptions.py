@@ -15,7 +15,7 @@ from typing import Any
 from types import TracebackType
 
 
-class SyntaxHighlighter:
+class SyntaxHighlighter:  # pragma: no cover
 
     _default_style = {
         "comment": "\x1b[30m\x1b[1m{}\x1b[0m",
@@ -97,7 +97,7 @@ class SyntaxHighlighter:
             return
 
 
-class ExceptionFormatter:
+class ExceptionFormatter:  # pragma: no cover
 
     _default_theme = {
         "introduction": "\x1b[33m\x1b[1m{}\x1b[0m",
@@ -496,7 +496,7 @@ def _get_detailed_traceback(exc_info: TracebackType):
     return ''.join(lines)
 
 
-def _shorter_log_record(text: Any) -> str:
+def _shorter_log_record(text: Any) -> str:  # pragma: no cover
     if len(str(text)) > 3000:
         prefix = 'Log record is too long. Here is truncated version:'
         if isinstance(text, (list, dict, tuple, set)):
@@ -527,7 +527,7 @@ def _shorter_log_record(text: Any) -> str:
     return resp
 
 
-class MyFormatter(logging.Formatter):
+class MyFormatter(logging.Formatter):  # pragma: no cover
     def __init__(self):
         super().__init__(fmt=NEW_LOG_FORMAT, datefmt=NEW_DATE_FORMAT, style='{')
 
@@ -548,7 +548,7 @@ logger.setLevel(logging.DEBUG)
 logger.propagate = False
 
 
-def _sys_exc_handler(exc_type, exc_value, exc_tb):
+def _sys_exc_handler(exc_type, exc_value, exc_tb):  # pragma: no cover
     logging.error(_get_detailed_traceback((exc_type, exc_value, exc_tb)))
 
 

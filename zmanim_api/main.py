@@ -30,6 +30,15 @@ async def date_exception_handler(request: Request, exc: DateException):
     )
 
 
+@app.exception_handler(Exception)
+async def main_exception_handler(request: Request, e: Exception):
+    logger.exception(e)
+    return JSONResponse(
+        status_code=400,
+        content={'message': repr(e)}
+    )
+
+
 if __name__ == '__main__':
     uvicorn.run(
         app,

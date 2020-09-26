@@ -7,6 +7,7 @@ from zmanim_api.api_helpers import FastsChoices, HavdalaChoices
 from ..consts import LAT, LNG, ZERO_ELEVATION, PY_DATE
 
 
+@pytest.mark.fast
 def test_regular_fast():
     expected = {
         'settings': {
@@ -33,6 +34,7 @@ def test_regular_fast():
     assert actual.dict(exclude_none=True, by_alias=True) == expected
 
 
+@pytest.mark.fast
 def test_moved_fast_esther():
     expected = {
         'settings': {
@@ -58,6 +60,7 @@ def test_moved_fast_esther():
     assert actual.dict(exclude_none=True, by_alias=True) == expected
 
 
+@pytest.mark.fast
 def test_moved_fast_tammuz_and_av():
     expected_1 = {
         'settings': {

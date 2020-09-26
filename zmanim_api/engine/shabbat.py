@@ -6,7 +6,7 @@ from zmanim.hebrew_calendar.jewish_calendar import JewishCalendar
 from zmanim.limudim.calculators.parsha import Parsha
 
 from ..models import Shabbat, Settings
-from ..api_helpers import HavdalaChoises, HAVDALA_PARAMS
+from ..api_helpers import HavdalaChoices, HAVDALA_PARAMS
 from ..utils import get_next_weekday, get_tz, is_diaspora
 
 
@@ -16,7 +16,7 @@ def get_shabbat(
         lng: float,
         elevation: float,
         cl_offset: int,
-        havdala: HavdalaChoises,
+        havdala: HavdalaChoices,
         date_: date
 ) -> Shabbat:
     # _ = get_translator(lang)

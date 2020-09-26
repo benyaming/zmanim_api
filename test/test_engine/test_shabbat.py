@@ -1,7 +1,7 @@
 from datetime import date, datetime as dt
 
 from zmanim_api.engine.shabbat import get_shabbat
-from zmanim_api.api_helpers import HavdalaChoises
+from zmanim_api.api_helpers import HavdalaChoices
 from ..consts import LAT, LNG, ZERO_ELEVATION, CL_OFFSET, HAVDALA, PY_DATE
 
 
@@ -20,7 +20,7 @@ def test_regular_shabbat():
         'late_cl_warning': False
     }
 
-    resp = get_shabbat(LAT, LNG, ZERO_ELEVATION, CL_OFFSET, HavdalaChoises.tzeis_8_5_degrees,  PY_DATE)
+    resp = get_shabbat(LAT, LNG, ZERO_ELEVATION, CL_OFFSET, HavdalaChoices.tzeis_8_5_degrees, PY_DATE)
     assert resp.dict(exclude_none=True, by_alias=True) == expected
 
 
@@ -39,7 +39,7 @@ def test_shabbat_with_late_cl_warning():
         'late_cl_warning': True
     }
 
-    resp = get_shabbat(55.5, 37.7, ZERO_ELEVATION, CL_OFFSET, HavdalaChoises.tzeis_8_5_degrees,
+    resp = get_shabbat(55.5, 37.7, ZERO_ELEVATION, CL_OFFSET, HavdalaChoices.tzeis_8_5_degrees,
                        date(2020, 6, 15))
     assert resp.dict(exclude_none=True, by_alias=True) == expected
 
@@ -72,8 +72,8 @@ def test_shabbat_with_different_parsha():
         'late_cl_warning': False
     }
 
-    resp_1 = get_shabbat(LAT, LNG, ZERO_ELEVATION, CL_OFFSET, HavdalaChoises.tzeis_8_5_degrees, date.fromisoformat('2020-05-30'))
-    resp_2 = get_shabbat(37.7, LNG, ZERO_ELEVATION, CL_OFFSET, HavdalaChoises.tzeis_8_5_degrees, date.fromisoformat('2020-05-30'))
+    resp_1 = get_shabbat(LAT, LNG, ZERO_ELEVATION, CL_OFFSET, HavdalaChoices.tzeis_8_5_degrees, date.fromisoformat('2020-05-30'))
+    resp_2 = get_shabbat(37.7, LNG, ZERO_ELEVATION, CL_OFFSET, HavdalaChoices.tzeis_8_5_degrees, date.fromisoformat('2020-05-30'))
 
     assert resp_1.dict(exclude_none=True, by_alias=True) == expected_1
     assert resp_2.dict(exclude_none=True, by_alias=True) == expected_2
@@ -120,9 +120,9 @@ def test_shabbat_with_yomtov():
         'late_cl_warning': False
     }
 
-    resp_1 = get_shabbat(LAT, LNG, ZERO_ELEVATION, CL_OFFSET, HavdalaChoises.tzeis_8_5_degrees, date.fromisoformat('2020-05-29'))
-    resp_2 = get_shabbat(37.7, LNG, ZERO_ELEVATION, CL_OFFSET, HavdalaChoises.tzeis_8_5_degrees, date.fromisoformat('2020-05-29'))
-    resp_3 = get_shabbat(37.7, LNG, ZERO_ELEVATION, CL_OFFSET, HavdalaChoises.tzeis_8_5_degrees, date.fromisoformat('2020-04-10'))
+    resp_1 = get_shabbat(LAT, LNG, ZERO_ELEVATION, CL_OFFSET, HavdalaChoices.tzeis_8_5_degrees, date.fromisoformat('2020-05-29'))
+    resp_2 = get_shabbat(37.7, LNG, ZERO_ELEVATION, CL_OFFSET, HavdalaChoices.tzeis_8_5_degrees, date.fromisoformat('2020-05-29'))
+    resp_3 = get_shabbat(37.7, LNG, ZERO_ELEVATION, CL_OFFSET, HavdalaChoices.tzeis_8_5_degrees, date.fromisoformat('2020-04-10'))
 
     assert resp_1.dict(exclude_none=True, by_alias=True) == expected_1
     assert resp_2.dict(exclude_none=True, by_alias=True) == expected_2

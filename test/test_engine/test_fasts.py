@@ -3,7 +3,7 @@ from datetime import date, datetime as dt
 import pytest
 
 from zmanim_api.engine.holidays import fast
-from zmanim_api.api_helpers import FastsChoises, HavdalaChoises
+from zmanim_api.api_helpers import FastsChoices, HavdalaChoices
 from ..consts import LAT, LNG, ZERO_ELEVATION, PY_DATE
 
 
@@ -23,12 +23,12 @@ def test_regular_fast():
     }
 
     actual = fast(
-        FastsChoises.fast_9_av.value,
+        FastsChoices.fast_9_av.value,
         PY_DATE,
         LAT,
         LNG,
         ZERO_ELEVATION,
-        HavdalaChoises.tzeis_8_5_degrees
+        HavdalaChoices.tzeis_8_5_degrees
     )
     assert actual.dict(exclude_none=True, by_alias=True) == expected
 
@@ -48,12 +48,12 @@ def test_moved_fast_esther():
     }
 
     actual = fast(
-        FastsChoises.fast_esther.value,
+        FastsChoices.fast_esther.value,
         date(2024, 1, 15),
         LAT,
         LNG,
         ZERO_ELEVATION,
-        HavdalaChoises.tzeis_8_5_degrees
+        HavdalaChoices.tzeis_8_5_degrees
     )
     assert actual.dict(exclude_none=True, by_alias=True) == expected
 
@@ -86,20 +86,20 @@ def test_moved_fast_tammuz_and_av():
     }
 
     actual_1 = fast(
-        FastsChoises.fast_17_tammuz.value,
+        FastsChoices.fast_17_tammuz.value,
         date(2019, 1, 15),
         LAT,
         LNG,
         ZERO_ELEVATION,
-        HavdalaChoises.tzeis_8_5_degrees
+        HavdalaChoices.tzeis_8_5_degrees
     )
     actual_2 = fast(
-        FastsChoises.fast_9_av.value,
+        FastsChoices.fast_9_av.value,
         date(2019, 1, 15),
         LAT,
         LNG,
         ZERO_ELEVATION,
-        HavdalaChoises.tzeis_8_5_degrees
+        HavdalaChoices.tzeis_8_5_degrees
     )
 
     assert actual_1.dict(exclude_none=True, by_alias=True) == expected_1

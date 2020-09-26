@@ -3,11 +3,11 @@ from typing import Optional
 from fastapi import Query, APIRouter
 
 from ..api_helpers import (
-    LanguageChoises,
-    SimpleHolidayChoises,
-    YomTovChoises,
-    FastsChoises,
-    HavdalaChoises,
+    LanguageChoices,
+    SimpleHolidayChoices,
+    YomTovChoices,
+    FastsChoices,
+    HavdalaChoices,
     validate_date_or_get_now,
     validate_datetime_or_get_now
 )
@@ -29,14 +29,14 @@ from ..engine.rosh_chodesh import get_next_rosh_chodesh
 from ..engine import holidays as hd
 from . import openapi_desctiptions as ds
 
-lang_param = Query(LanguageChoises.en, description=ds.lang)
+lang_param = Query(LanguageChoices.en, description=ds.lang)
 cl_param = Query(18, description='qwerrt', ge=0, lt=100)
 date_param = Query(None, description=ds.date)
 dt_param = Query(None, description=ds.dt)
 lat_param = Query(32.09, description=ds.lat, ge=-90, le=90)
 lng_param = Query(34.86, description=ds.lng, ge=-180, le=180)
 elevation_param = Query(0, description='', ge=0)
-havdala_param = Query(HavdalaChoises.tzeis_8_5_degrees, description='tzeit')
+havdala_param = Query(HavdalaChoices.tzeis_8_5_degrees, description='tzeit')
 
 
 main_router = APIRouter()
@@ -66,7 +66,7 @@ async def shabbat(
         lat: float = lat_param,
         lng: float = lng_param,
         elevation: float = elevation_param,
-        havdala: HavdalaChoises = havdala_param,
+        havdala: HavdalaChoices = havdala_param,
         date: Optional[str] = date_param
 ) -> Shabbat:
     parsed_date = validate_date_or_get_now(date)
@@ -90,7 +90,7 @@ async def daf_yomi(date: Optional[str] = date_param) -> DafYomi:
 
 @main_router.get('/holiday', response_model=Holiday)
 async def holiday(
-        holiday_name: SimpleHolidayChoises = Query(..., description='select holiday name'),  # todo descr
+        holiday_name: SimpleHolidayChoices = Query(..., description='select holiday name'),  # todo descr
         date: Optional[str] = date_param
 ):
     parsed_date = validate_date_or_get_now(date)
@@ -100,12 +100,12 @@ async def holiday(
 
 @main_router.get('/yom_tov', response_model=YomTov, response_model_exclude_none=True)
 async def yom_tov(
-        yomtov_name: YomTovChoises = Query(..., description='select yomtov name'),  # todo descr
+        yomtov_name: YomTovChoices = Query(..., description='select yomtov name'),  # todo descr
         lat: float = lat_param,
         lng: float = lng_param,
         elevation: int = elevation_param,
         cl: int = cl_param,
-        havdala: HavdalaChoises = havdala_param,
+        havdala: HavdalaChoices = havdala_param,
         date: Optional[str] = date_param
 ):
     parsed_date = validate_date_or_get_now(date)
@@ -123,11 +123,11 @@ async def yom_tov(
 
 @main_router.get('/fast', response_model=Fast, response_model_exclude_none=True)
 async def fast(
-        fast_name: FastsChoises = Query(..., description='Select fast name'),
+        fast_name: FastsChoices = Query(..., description='Select fast name'),
         lat: float = lat_param,
         lng: float = lng_param,
         elevation: int = elevation_param,
-        havdala: HavdalaChoises = havdala_param,
+        havdala: HavdalaChoices = havdala_param,
         date: Optional[str] = date_param
 ) -> Fast:
     parsed_date = validate_date_or_get_now(date)

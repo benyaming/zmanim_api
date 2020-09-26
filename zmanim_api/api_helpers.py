@@ -10,12 +10,12 @@ class DateException(Exception):
     ...
 
 
-class LanguageChoises(Enum):
+class LanguageChoices(Enum):
     en = 'en'
     ru = 'ru'
 
 
-class SimpleHolidayChoises(Enum):
+class SimpleHolidayChoices(Enum):
     chanukah = 'chanukah'
     tu_bi_shvat = 'tu_bi_shvat'
     purim = 'purim'
@@ -27,7 +27,7 @@ class SimpleHolidayChoises(Enum):
     yom_yerushalaim = 'yom_yerushalaim'
 
 
-class YomTovChoises(Enum):
+class YomTovChoices(Enum):
     rosh_hashana = 'rosh_hashana'
     yom_kippur = 'yom_kippur'
     succot = 'succot'
@@ -36,7 +36,7 @@ class YomTovChoises(Enum):
     shavuot = 'shavuot'
 
 
-class FastsChoises(str, Enum):
+class FastsChoices(str, Enum):
     fast_gedalia = 'fast_gedalia'
     fast_10_teves = 'fast_10_teves'
     fast_esther = 'fast_esther'
@@ -44,7 +44,7 @@ class FastsChoises(str, Enum):
     fast_9_av = 'fast_9_av'
 
 
-class HavdalaChoises(str, Enum):
+class HavdalaChoices(str, Enum):
     tzeis_5_95_degrees = 'tzeis_5_95_degrees'
     tzeis_8_5_degrees = 'tzeis_8_5_degrees'
     tzeis_42_minutes = 'tzeis_42_minutes'

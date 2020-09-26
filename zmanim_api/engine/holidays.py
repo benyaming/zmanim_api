@@ -6,7 +6,7 @@ from zmanim.zmanim_calendar import ZmanimCalendar
 from zmanim.hebrew_calendar.jewish_calendar import JewishCalendar
 
 from ..utils import get_tz, is_diaspora
-from ..api_helpers import HAVDALA_PARAMS, HavdalaChoises
+from ..api_helpers import HAVDALA_PARAMS, HavdalaChoices
 from ..models import Holiday, YomTov, Fast, SimpleSettings, Settings
 
 
@@ -124,7 +124,7 @@ def fast(
         lat: Optional[float],
         lng: Optional[float],
         elevation: int,
-        havdala_opinion: HavdalaChoises
+        havdala_opinion: HavdalaChoices
 ) -> Fast:
     tz = get_tz(lat, lng)
     diaspora = is_diaspora(tz)
@@ -190,7 +190,7 @@ def get_yom_tov(
         lng: float,
         elevation: int,
         cl: int,
-        havdala_opinion: HavdalaChoises
+        havdala_opinion: HavdalaChoices
 ) -> YomTov:
     """
     There are different holiday dates sets:

@@ -21,7 +21,6 @@ class SimpleHolidayChoises(Enum):
     purim = 'purim'
     lag_baomer = 'lag_baomer'
     tu_be_av = 'tu_be_av'
-    israel_holidays = 'israel_holidays'
     yom_hashoah = 'yom_hashoah'
     yom_hazikaron = 'yom_hazikaron'
     yom_haatzmaut = 'yom_haatzmaut'

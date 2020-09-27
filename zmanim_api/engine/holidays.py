@@ -76,44 +76,31 @@ def _get_first_day_date(name: str, date_: date, diaspora: bool = True) -> Jewish
     if month == 12 and calendar.is_jewish_leap_year():
         calendar.forward(30)
 
-    # if yom hashoa felt on friday, moove it to thursday
+    # if yom hashoa felt on Friday, moove it to Thursday
     if name == 'yom_hashoah' and calendar.day_of_week == 6:
         calendar.forward(-1)
-    # if first_day_date == YOM_HASHOAH and holiday_date.weekday() == 6:
-    #     holiday_date = HebrewDate(holiday_date.year, month, day - 1)
 
-    # if yom hashoa felt on shabbat, moove it to sunday
-    if 'yom_hashoah' == (27, 1) and calendar.day_of_week == 7:
+    # if yom hashoa felt on Sunday, moove it to Monday
+    if name == 'yom_hashoah' and calendar.day_of_week == 1:
         calendar.forward(1)
-    # if first_day_date == YOM_HASHOAH and holiday_date.weekday() == 7:
-    #     holiday_date = HebrewDate(holiday_date.year, month, day + 1)
 
     # if yom hazikarom felt on thursday and yom haatzmaut on friday,
     # moove them one day to past
     if (name == 'yom_hazikaron' and calendar.day_of_week == 5) or \
        (name == 'yom_haatzmaut' and calendar.day_of_week == 6):
         calendar.forward(-1)
-    # if (first_day_date == YOM_HAZIKARON and holiday_date.weekday() == 5) or \
-    #         (first_day_date == YOM_HAATZMAUT and holiday_date.weekday() == 6):
-    #     holiday_date = HebrewDate(holiday_date.year, month, day - 1)
 
     # if yom hazikarom felt on friday and yom haatzmaut on shabbat,
     # moove them two days to past
     if (name == 'yom_hazikaron' and calendar.day_of_week == 6) or \
        (name == 'yom_haatzmaut' and calendar.day_of_week == 7):
         calendar.forward(-2)
-    # if (first_day_date == YOM_HAZIKARON and holiday_date.weekday() == 6) or \
-    #         (first_day_date == YOM_HAATZMAUT and holiday_date.weekday() == 7):
-    #     holiday_date = HebrewDate(holiday_date.year, month, day - 2)
 
     # if yom hazikarom felt on sunday and yom haatzmaut on monday,
     # moove them one day to future
     if (name == 'yom_hazikaron' and calendar.day_of_week == 1) or \
        (name == 'yom_haatzmaut' and calendar.day_of_week == 2):
         calendar.forward(1)
-    # if (first_day_date == YOM_HAZIKARON and holiday_date.weekday() == 1) or \
-    #         (first_day_date == YOM_HAZIKARON and holiday_date.weekday() == 2):
-    #     holiday_date = HebrewDate(holiday_date.year, month, day + 1)
 
     return calendar
 

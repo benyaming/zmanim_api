@@ -1,14 +1,6 @@
-from gettext import translation as tr
-from datetime import datetime as dt, date, timedelta
+from datetime import date, timedelta
 
 from timezonefinder import TimezoneFinder
-
-from zmanim_api.settings import I18N_DOMAIN
-
-
-def get_translator(lang: str):
-    translator = tr(domain=I18N_DOMAIN, localedir='api/locales', languages=[lang])
-    return translator.gettext
 
 
 def get_tz(lat: float, lng: float) -> str:

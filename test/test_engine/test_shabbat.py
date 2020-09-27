@@ -1,10 +1,13 @@
 from datetime import date, datetime as dt
 
+import pytest
+
 from zmanim_api.engine.shabbat import get_shabbat
 from zmanim_api.api_helpers import HavdalaChoices
 from ..consts import LAT, LNG, ZERO_ELEVATION, CL_OFFSET, HAVDALA, PY_DATE
 
 
+@pytest.mark.shabbat
 def test_regular_shabbat():
     expected = {
         'candle_lighting': dt.fromisoformat('2020-04-17T18:53:00+03:00'),
@@ -24,6 +27,7 @@ def test_regular_shabbat():
     assert resp.dict(exclude_none=True, by_alias=True) == expected
 
 
+@pytest.mark.shabbat
 def test_shabbat_with_late_cl_warning():
     expected = {
         'candle_lighting': dt.fromisoformat('2020-06-19T20:57:00+03:00'),
@@ -44,6 +48,7 @@ def test_shabbat_with_late_cl_warning():
     assert resp.dict(exclude_none=True, by_alias=True) == expected
 
 
+@pytest.mark.shabbat
 def test_shabbat_with_different_parsha():
     expected_1 = {
         'candle_lighting': dt.fromisoformat('2020-06-05T19:26:00+03:00'),
@@ -79,6 +84,7 @@ def test_shabbat_with_different_parsha():
     assert resp_2.dict(exclude_none=True, by_alias=True) == expected_2
 
 
+@pytest.mark.shabbat
 def test_shabbat_with_yomtov():
     expected_1 = {
         'candle_lighting': dt.fromisoformat('2020-05-29T19:22:00+03:00'),

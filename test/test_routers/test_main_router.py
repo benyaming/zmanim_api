@@ -1,3 +1,4 @@
+import pytest
 from fastapi.testclient import TestClient
 
 from zmanim_api.main import app
@@ -7,6 +8,8 @@ from ..consts import GEO_DATE_PARAMS, ASUR_BEMELACHA_PARAMS, DATE, HAVDALA
 client = TestClient(app)
 
 
+@pytest.mark.api
+@pytest.mark.zmanim
 def test_zmanim_endpoint():
     params = GEO_DATE_PARAMS
     json = {
@@ -66,6 +69,8 @@ def test_zmanim_endpoint():
     assert resp.json() == expected
 
 
+@pytest.mark.api
+@pytest.mark.shabbat
 def test_shabbat_endpoint():
     params = {**GEO_DATE_PARAMS, **ASUR_BEMELACHA_PARAMS}
     expected = {
@@ -89,6 +94,8 @@ def test_shabbat_endpoint():
     assert resp.json() == expected
 
 
+@pytest.mark.api
+@pytest.mark.rosh_chodesh
 def test_rosh_chodesh_endpoint():
     params = {'date': DATE}
     expected = {
@@ -111,6 +118,8 @@ def test_rosh_chodesh_endpoint():
     assert resp.json() == expected
 
 
+@pytest.mark.api
+@pytest.mark.daf_yomi
 def test_daf_yomi_endpoint():
     params = {'date': GEO_DATE_PARAMS['date']}
     expected = {
@@ -125,6 +134,8 @@ def test_daf_yomi_endpoint():
     assert resp.json() == expected
 
 
+@pytest.mark.api
+@pytest.mark.holiday
 def test_holiday_endpoint():
     params = {
         'holiday_name': 'purim',
@@ -143,6 +154,8 @@ def test_holiday_endpoint():
     assert resp.json() == expected
 
 
+@pytest.mark.api
+@pytest.mark.yomtov
 def test_yomtov_endpoint():
     params = {
         **GEO_DATE_PARAMS,
@@ -176,6 +189,8 @@ def test_yomtov_endpoint():
     assert resp.json() == expected
 
 
+@pytest.mark.api
+@pytest.mark.fast
 def test_fast_endpoint():
     params = {
         **GEO_DATE_PARAMS,

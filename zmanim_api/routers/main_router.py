@@ -88,7 +88,7 @@ async def daf_yomi(date: Optional[str] = date_param) -> DafYomi:
     return data
 
 
-@main_router.get('/holiday', response_model=Holiday)
+@main_router.get('/holiday', response_model=Holiday, response_model_exclude_none=True)
 async def holiday(
         holiday_name: SimpleHolidayChoices = Query(..., description='select holiday name'),  # todo descr
         date: Optional[str] = date_param

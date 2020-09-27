@@ -16,7 +16,7 @@ app.include_router(main_router, tags=['Main'])
 
 
 @app.on_event('startup')
-async def on_start():
+async def on_start():  # pragma: no cover
     logger.info('STARTING ZMANIM API...')
 
 
@@ -30,16 +30,16 @@ async def date_exception_handler(request: Request, exc: DateException):
     )
 
 
-@app.exception_handler(Exception)
+@app.exception_handler(Exception)  # pragma: no cover
 async def main_exception_handler(request: Request, e: Exception):
     logger.exception(e)
     return JSONResponse(
-        status_code=400,
+        status_code=500,
         content={'message': repr(e)}
     )
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     uvicorn.run(
         app,
         host='0.0.0.0' if getenv('DOCKER_MODE') else '127.0.0.1',

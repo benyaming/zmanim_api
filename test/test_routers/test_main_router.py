@@ -144,7 +144,6 @@ def test_holiday_endpoint():
     expected = {
         "settings": {
             "date": "2020-04-15",
-            "jewish_date": None,
             "holiday_name": "purim"
         },
         "date": "2021-02-26"
@@ -215,3 +214,26 @@ def test_fast_endpoint():
 
     resp = client.get('/fast', params=params)
     assert resp.json() == expected
+
+
+@pytest.mark.api
+def test_asur_bemelacha_endpoint():
+    params_1 = {
+        'lat': GEO_DATE_PARAMS['lat'],
+        'lng': GEO_DATE_PARAMS['lng'],
+        'elevation': GEO_DATE_PARAMS['elevation'],
+        'dt': '2020-09-27T12:00'
+    }
+    params_2 = {
+        'lat': GEO_DATE_PARAMS['lat'],
+        'lng': GEO_DATE_PARAMS['lng'],
+        'elevation': GEO_DATE_PARAMS['elevation'],
+        'dt': '2020-09-26T12:00'
+    }
+    expected_1 = {'result': False}
+    expected_2 = {'result': True}
+
+    actual_1 = client.get('/is_asur_bemelacha', params=params_1)
+    actual_2 = client.get('/is_asur_bemelacha', params=params_2)
+    assert actual_1.json() == expected_1
+    assert actual_2.json() == expected_2

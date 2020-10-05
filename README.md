@@ -135,4 +135,4 @@ Project Link: [https://github.com/benyaming/zmanim_api](https://github.com/benya
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/benyaming
 
-``
+

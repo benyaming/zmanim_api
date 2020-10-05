@@ -40,7 +40,7 @@ Simple high-level api for all features of hebrew calendar.
 
 * [Python 3.7](https://www.python.org/downloads/release/python-377/)
 * [FastAPI](https://github.com/tiangolo/fastapi)
-* [KosherJava's](https://kosherjava.com/zmanim-project) [python port](https://github.com/pinnymz/python-zmanim)
+* [KosherJava's](https://github.com/KosherJava/zmanim) [python port](https://github.com/pinnymz/python-zmanim)
 
 
 

@@ -74,6 +74,7 @@ def get_zmanim(
     calendar = ZmanimCalendar(geo_location=location, date=date_)
     zmanim = _calculate_zmanim(calendar, settings)
 
+
     settings = Settings(date=date_, coordinates=(lat, lng), elevation=elevation, jewish_date=jewish_date)
     return ZmanimResponse(settings=settings, **zmanim)
 

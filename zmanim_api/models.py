@@ -46,22 +46,22 @@ class ZmanimRequest(BaseModel):
 
 class ZmanimResponse(BaseModel):
     settings: Settings
-    sunrise: Optional[datetime] = None
     alos: Optional[datetime] = None
-    sof_zman_tefila_gra: Optional[datetime] = None
-    sof_zman_tefila_ma: Optional[datetime] = None
-    talis_ma: Optional[datetime] = None
-    sof_zman_shema_gra: Optional[datetime] = None
-    mincha_ketana: Optional[datetime] = None
+    sunrise: Optional[datetime] = None
+    talis_ma: Optional[datetime] = None  # todo
     sof_zman_shema_ma: Optional[datetime] = None
+    sof_zman_shema_gra: Optional[datetime] = None
+    sof_zman_tefila_ma: Optional[datetime] = None
+    sof_zman_tefila_gra: Optional[datetime] = None
     chatzos: Optional[datetime] = None
     mincha_gedola: Optional[datetime] = None
+    mincha_ketana: Optional[datetime] = None
     plag_mincha: Optional[datetime] = None
     sunset: Optional[datetime] = None
-    tzeis_8_5_degrees: Optional[datetime] = None
-    tzeis_72_minutes: Optional[datetime] = None
-    tzeis_42_minutes: Optional[datetime] = None
     tzeis_5_95_degrees: Optional[datetime] = None
+    tzeis_8_5_degrees: Optional[datetime] = None
+    tzeis_42_minutes: Optional[datetime] = None
+    tzeis_72_minutes: Optional[datetime] = None
     chatzot_laila: Optional[datetime] = None
     astronomical_hour_ma: Optional[time] = None
     astronomical_hour_gra: Optional[time] = None

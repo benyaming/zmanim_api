@@ -2,6 +2,10 @@ from enum import Enum
 from typing import Optional
 from datetime import date, datetime
 
+import pytz
+
+from zmanim_api.utils import get_tz
+
 DATE_PATTERN = r'^\d{1,2}\/\d{1,2}\/\d{1,4}$'
 DATE_FORMAT = '%d/%m/%Y'
 
@@ -59,23 +63,29 @@ HAVDALA_PARAMS = {
 }
 
 
-def validate_date_or_get_now(date_: Optional[str]) -> date:
+def validate_date_or_get_now(date_: Optional[str], lat: float = 32.09, lng: float = 34.86) -> date:
     if date_:
         try:
             response = date.fromisoformat(date_)
         except ValueError as e:
             raise DateException(e)
+
     else:
-        response = date.today()
+        tz_name = get_tz(lat, lng)
+        tz = pytz.timezone(tz_name)
+
+        response = datetime.now().astimezone(tz).date()
     return response
 
 
-def validate_datetime_or_get_now(dt: Optional[str]) -> datetime:
+def validate_datetime_or_get_now(dt: Optional[str], lat: float, lng: float) -> datetime:
     if dt:
         try:
             response = datetime.fromisoformat(dt)
         except ValueError as e:
             raise DateException(e)
     else:
-        response = datetime.now()
+        tz_name = get_tz(lat, lng)
+        tz = pytz.timezone(tz_name)
+        response = datetime.now().astimezone(tz)
     return response

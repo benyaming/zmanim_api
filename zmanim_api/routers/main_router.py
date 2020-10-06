@@ -50,7 +50,7 @@ async def zmanim(
         lat: float = lat_param,
         lng: float = lng_param,
 ) -> ZmanimResponse:
-    parsed_date = validate_date_or_get_now(date)
+    parsed_date = validate_date_or_get_now(date, lat, lng)
     data = get_zmanim(
         date_=parsed_date,
         lat=lat,
@@ -69,7 +69,7 @@ async def shabbat(
         havdala: HavdalaChoices = havdala_param,
         date: Optional[str] = date_param
 ) -> Shabbat:
-    parsed_date = validate_date_or_get_now(date)
+    parsed_date = validate_date_or_get_now(date, lat, lng)
     data = get_shabbat(lat, lng, elevation, cl_offset, havdala, parsed_date)
     return data
 
@@ -108,7 +108,7 @@ async def yom_tov(
         havdala: HavdalaChoices = havdala_param,
         date: Optional[str] = date_param
 ):
-    parsed_date = validate_date_or_get_now(date)
+    parsed_date = validate_date_or_get_now(date, lat, lng)
     resp = hd.get_yom_tov(
         name=yomtov_name.name,
         date_=parsed_date,
@@ -130,7 +130,7 @@ async def fast(
         havdala: HavdalaChoices = havdala_param,
         date: Optional[str] = date_param
 ) -> Fast:
-    parsed_date = validate_date_or_get_now(date)
+    parsed_date = validate_date_or_get_now(date, lat, lng)
     data = hd.fast(
         name=fast_name.name,
         date_=parsed_date,
@@ -149,6 +149,6 @@ async def is_asur_bemelacha(
         elevation: int = elevation_param,
         dt: Optional[str] = dt_param
 ) -> BooleanResp:
-    parsed_dt = validate_datetime_or_get_now(dt)
+    parsed_dt = validate_datetime_or_get_now(dt, lat, lng)
     resp = is_asur_bemelaha(parsed_dt, lat, lng, elevation)
     return resp

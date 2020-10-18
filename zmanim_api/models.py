@@ -27,7 +27,7 @@ class ZmanimRequest(BaseModel):
     alos: bool = True
     sof_zman_tefila_gra: bool = True
     sof_zman_tefila_ma: bool = True
-    talis_ma: bool = True
+    misheyakir_10_2: bool = True
     sof_zman_shema_gra: bool = True
     sof_zman_shema_ma: bool = True
     chatzos: bool = True
@@ -48,7 +48,7 @@ class ZmanimResponse(BaseModel):
     settings: Settings
     alos: Optional[datetime] = None
     sunrise: Optional[datetime] = None
-    talis_ma: Optional[datetime] = None  # todo
+    misheyakir_10_2: Optional[datetime] = None
     sof_zman_shema_ma: Optional[datetime] = None
     sof_zman_shema_gra: Optional[datetime] = None
     sof_zman_tefila_ma: Optional[datetime] = None

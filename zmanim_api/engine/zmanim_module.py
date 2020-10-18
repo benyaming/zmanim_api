@@ -11,12 +11,15 @@ from zmanim_api.utils import get_tz, is_diaspora
 from zmanim_api.models import ZmanimRequest, ZmanimResponse, Settings, BooleanResp
 
 
+GEOMETRIC_ZENITH = 90
+
+
 _ZMANIM_CALCULATORS = {
     'sunrise': 'sunrise',
     'alos': 'alos',
     'sof_zman_tefila_gra': 'sof_zman_tfila_gra',
     'sof_zman_tefila_ma': 'sof_zman_tfila_mga',
-    'talis_ma': '',
+    'misheyakir_10_2': ['sunrise_offset_by_degrees', (GEOMETRIC_ZENITH + 10.2,)],
     'sof_zman_shema_gra': 'sof_zman_shma_gra',
     'sof_zman_shema_ma': 'sof_zman_shma_mga',
     'chatzos': 'chatzos',
@@ -45,6 +48,9 @@ def _calculate_zmanim(calendar: ZmanimCalendar, settings: ZmanimRequest) -> Dict
         if isinstance(method_name, tuple):
             method_name, kwargs = method_name
             zman_value: dt = getattr(calendar, method_name)(kwargs)
+        elif isinstance(method_name, list):
+            method_name, args = method_name
+            zman_value: dt = getattr(calendar, method_name)(*args)
         else:
             zman_value: dt = getattr(calendar, method_name)()
 
@@ -73,7 +79,6 @@ def get_zmanim(
     location = GeoLocation('', lat, lng, tz, elevation)
     calendar = ZmanimCalendar(geo_location=location, date=date_)
     zmanim = _calculate_zmanim(calendar, settings)
-
 
     settings = Settings(date=date_, coordinates=(lat, lng), elevation=elevation, jewish_date=jewish_date)
     return ZmanimResponse(settings=settings, **zmanim)

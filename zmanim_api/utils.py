@@ -7,6 +7,9 @@ def get_tz(lat: float, lng: float) -> str:
     """ Calculates timezone from coordinates """
     tf = TimezoneFinder()
     tz = tf.timezone_at(lng=lng, lat=lat)
+
+    if tz == 'Asia/Hebron':
+        tz = 'Asia/Jerusalem'
     return tz
 
 

@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "disable_existing_loggers": false,
+  "formatters": {
+    "default": {
+      "()": "betterlogging.ColorizedFormatter"
+    },
+    "access": {
+      "()": "betterlogging.ColorizedFormatter",
+      "fmt": "%(c_fg_green)s%(asctime)s %(c_color)s%(levelname)-8s%(c_reset)s %(c_fg_cyan)s[%(name)s] %(c_reset)s%(message)s"
+    }
+  },
+  "handlers": {
+    "default": {
+      "formatter": "default",
+      "class": "logging.StreamHandler"
+    },
+    "access": {
+      "formatter": "access",
+      "class": "logging.StreamHandler",
+      "stream": "ext://sys.stdout"
+    }
+  },
+  "loggers": {
+    "": {
+      "handlers": [
+        "default"
+      ],
+      "level": "TRACE"
+    },
+    "uvicorn.error": {
+      "level": "INFO"
+    },
+    "uvicorn.access": {
+      "handlers": [
+        "access"
+      ],
+      "level": "INFO",
+      "propagate": false
+    }
+  }
+}

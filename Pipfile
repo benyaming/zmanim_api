@@ -15,10 +15,12 @@ uvicorn = "*"
 pytz = "*"
 arrow = "*"
 timezonefinder = "*"
-zmanim = {git = "https://github.com/pinnymz/python-zmanim.git"}
+zmanim = "*"
 aiohttp = "*"
 julian = "*"
 pytest = "*"
+betterlogging = "*"
+sentry-sdk = "==1.1.0"
 
 [requires]
 python_version = "3.7"

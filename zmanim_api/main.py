@@ -5,7 +5,7 @@ import sentry_sdk
 import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
-from betterlogging import get_colorized_logger, INFO
+from betterlogging import get_colorized_logger, DEBUG
 
 from zmanim_api.api_helpers import DateException
 from zmanim_api.settings import ROOT_PATH, SENTRY_PUBLIC_KEY
@@ -13,7 +13,7 @@ from zmanim_api.routers.main_router import main_router
 
 
 logger = get_colorized_logger()
-logger.setLevel(INFO)
+logger.setLevel(DEBUG)
 
 app = FastAPI(root_path=f'/{ROOT_PATH}', docs_url='/', title='Zmanim API', version='1.0.1')
 

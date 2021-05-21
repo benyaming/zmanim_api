@@ -9,6 +9,6 @@ SENTRY_PUBLIC_KEY = environ.get('SENTRY_PUBLIC_KEY')
 
 
 if SENTRY_PUBLIC_KEY:
-    sentry_sdk.init(
+    sentry_sdk.init(  # pragma: no cover
         dsn=SENTRY_PUBLIC_KEY
     )

@@ -30,9 +30,19 @@ def get_shabbat(
     friday_calendar = ZmanimCalendar(candle_lighting_offset=cl_offset, geo_location=location, date=friday)
     saturday_calendar = ZmanimCalendar(candle_lighting_offset=cl_offset, geo_location=location, date=saturday)
 
+    cl_time = friday_calendar.candle_lighting()
+    havdala_time = friday_calendar.candle_lighting()
+
     havdala_params = HAVDALA_PARAMS[havdala.name]
 
-    havdala_time: dt = saturday_calendar.tzais(havdala_params)
+    tzais = saturday_calendar.tzais(havdala_params)
+    if tzais:
+        havdala_time = tzais
+    elif saturday_calendar.chatzos():  # summer nights on north
+        havdala_time = saturday_calendar.chatzos() + timedelta(hours=12)
+    else:  # polar night
+        havdala_time = None
+
     late_cl_warning = False if friday_calendar.alos() else True
 
     jewish_calendar = JewishCalendar(saturday, in_israel=not is_diaspora(tz))
@@ -43,9 +53,9 @@ def get_shabbat(
 
     data = {
         'torah_part': torah_part,
-        'candle_lighting': friday_calendar.candle_lighting().isoformat(timespec='minutes'),
+        'candle_lighting': cl_time and cl_time.isoformat(timespec='minutes'),
         'cl_offset': cl_offset,
-        'havdala': havdala_time.isoformat(timespec='minutes'),
+        'havdala': havdala_time and havdala_time.isoformat(timespec='minutes'),
         'havdala_opinion': havdala.value,
         'late_cl_warning': late_cl_warning
     }

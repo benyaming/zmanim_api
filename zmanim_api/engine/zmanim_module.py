@@ -1,5 +1,5 @@
 from typing import Dict, Union
-from datetime import date, datetime as dt, time
+from datetime import date, datetime as dt, time, timedelta
 
 import arrow
 import pytz
@@ -33,6 +33,7 @@ _ZMANIM_CALCULATORS = {
     'tzeis_5_95_degrees': ('tzais', {'degrees': 5.95}),
     'astronomical_hour_ma': 'shaah_zmanis_mga',
     'astronomical_hour_gra': 'shaah_zmanis_gra',
+    'chatzot_laila': None
 }
 
 
@@ -42,7 +43,7 @@ def _calculate_zmanim(calendar: ZmanimCalendar, settings: ZmanimRequest) -> Dict
         if not required:
             continue
         method_name = _ZMANIM_CALCULATORS.get(zman_name)
-        if not method_name:
+        if not method_name and zman_name != 'chatzot_laila':
             continue
         
         if isinstance(method_name, tuple):
@@ -51,6 +52,8 @@ def _calculate_zmanim(calendar: ZmanimCalendar, settings: ZmanimRequest) -> Dict
         elif isinstance(method_name, list):
             method_name, args = method_name
             zman_value: dt = getattr(calendar, method_name)(*args)
+        elif method_name is None:  # chatzos laila case
+            zman_value: dt = calendar.chatzos() + timedelta(hours=12)
         else:
             zman_value: dt = getattr(calendar, method_name)()
 

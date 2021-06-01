@@ -61,7 +61,8 @@ def test_zmanim_endpoint():
         'tzeis_42_minutes': '2020-04-15T19:52:05.710586+03:00',
         'tzeis_5_95_degrees': '2020-04-15T19:35:01.557256+03:00',
         'astronomical_hour_ma': '01:16:53',
-        'astronomical_hour_gra': '01:04:53'
+        'astronomical_hour_gra': '01:04:53',
+        'chatzot_laila': '2020-04-16T00:40:45.014150+03:00'
     }
 
     resp = client.post('/zmanim', params=params, json=json)

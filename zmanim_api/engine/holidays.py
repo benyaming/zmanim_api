@@ -111,12 +111,10 @@ def fast(
         lat: Optional[float],
         lng: Optional[float],
         elevation: int,
-        havdala_opinion: HavdalaChoices
 ) -> Fast:
     tz = get_tz(lat, lng)
     diaspora = is_diaspora(tz)
     is_9_av = True if name == 'fast_9_av' else None
-    havdala_params = HAVDALA_PARAMS[havdala_opinion.name]
 
     data = {'moved_fast': False}
 
@@ -149,10 +147,11 @@ def fast(
     # nvr_time = (sunset + timedelta(minutes=28))
     # ssk_time = (sunset + timedelta(minutes=25))
 
-    data['havdala'] = fast_calc.tzais(havdala_params)
+    data['havdala_8_5_dgr'] = fast_calc.tzais({'degrees': 8.5})
+    data['havdala_5_95_dgr'] = fast_calc.tzais({'degrees': 5.95})
+    data['havdala_42_min'] = fast_calc.sunset() + timedelta(minutes=42)
 
     settings = Settings(
-        havdala_opinion=havdala_opinion,
         coordinates=(lat, lng),
         elevation=elevation,
         date=date_,

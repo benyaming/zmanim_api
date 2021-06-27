@@ -53,7 +53,8 @@ def _calculate_zmanim(calendar: ZmanimCalendar, settings: ZmanimRequest) -> Dict
             method_name, args = method_name
             zman_value: dt = getattr(calendar, method_name)(*args)
         elif method_name is None:  # chatzos laila case
-            zman_value: dt = calendar.chatzos() + timedelta(hours=12)
+            chatzos = calendar.chatzos()
+            zman_value = chatzos + timedelta(hours=12) if chatzos else None
         else:
             zman_value: dt = getattr(calendar, method_name)()
 

@@ -1,4 +1,3 @@
-import pytest
 from fastapi.testclient import TestClient
 
 from zmanim_api.main import app
@@ -8,8 +7,6 @@ from ..consts import GEO_DATE_PARAMS, ASUR_BEMELACHA_PARAMS, DATE, HAVDALA
 client = TestClient(app)
 
 
-@pytest.mark.api
-@pytest.mark.zmanim
 def test_zmanim_endpoint():
     params = GEO_DATE_PARAMS
     json = {
@@ -71,8 +68,6 @@ def test_zmanim_endpoint():
     assert resp.json() == expected
 
 
-@pytest.mark.api
-@pytest.mark.shabbat
 def test_shabbat_endpoint():
     params = {**GEO_DATE_PARAMS, **ASUR_BEMELACHA_PARAMS}
     expected = {
@@ -96,8 +91,6 @@ def test_shabbat_endpoint():
     assert resp.json() == expected
 
 
-@pytest.mark.api
-@pytest.mark.rosh_chodesh
 def test_rosh_chodesh_endpoint():
     params = {'date': DATE}
     expected = {
@@ -120,8 +113,6 @@ def test_rosh_chodesh_endpoint():
     assert resp.json() == expected
 
 
-@pytest.mark.api
-@pytest.mark.daf_yomi
 def test_daf_yomi_endpoint():
     params = {'date': GEO_DATE_PARAMS['date']}
     expected = {
@@ -136,8 +127,6 @@ def test_daf_yomi_endpoint():
     assert resp.json() == expected
 
 
-@pytest.mark.api
-@pytest.mark.holiday
 def test_holiday_endpoint():
     params = {
         'holiday_name': 'purim',
@@ -155,8 +144,6 @@ def test_holiday_endpoint():
     assert resp.json() == expected
 
 
-@pytest.mark.api
-@pytest.mark.yomtov
 def test_yomtov_endpoint():
     params = {
         **GEO_DATE_PARAMS,
@@ -190,18 +177,14 @@ def test_yomtov_endpoint():
     assert resp.json() == expected
 
 
-@pytest.mark.api
-@pytest.mark.fast
 def test_fast_endpoint():
     params = {
         **GEO_DATE_PARAMS,
-        'havdala': HAVDALA,
         'fast_name': 'fast_gedalia'
     }
     expected = {
         'settings': {
             'date': '2020-04-15',
-            'havdala_opinion': 'tzeis_8_5_degrees',
             'coordinates': [
                 32.09,
                 34.86
@@ -211,14 +194,15 @@ def test_fast_endpoint():
         },
         'moved_fast': False,
         'fast_start': '2020-09-21T05:15:41.082623+03:00',
-        'havdala': '2020-09-21T19:14:29.657488+03:00'
+        'havdala_42_min': '2020-09-21T19:20:15.474227+03:00',
+        'havdala_5_95_dgr': '2020-09-21T19:02:25.211412+03:00',
+        'havdala_8_5_dgr': '2020-09-21T19:14:29.657488+03:00'
     }
 
     resp = client.get('/fast', params=params)
     assert resp.json() == expected
 
 
-@pytest.mark.api
 def test_asur_bemelacha_endpoint():
     params_1 = {
         'lat': GEO_DATE_PARAMS['lat'],

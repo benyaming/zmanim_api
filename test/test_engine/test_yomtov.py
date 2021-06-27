@@ -1,13 +1,10 @@
 from datetime import date, datetime as dt
 
-import pytest
-
 from zmanim_api.engine.holidays import get_yom_tov
 from zmanim_api.api_helpers import YomTovChoices, HavdalaChoices
 from ..consts import LAT, LNG, ZERO_ELEVATION
 
 
-@pytest.mark.yomtov
 def test_regular_yomtov_in_istael():
     expected = {
         'settings': {
@@ -37,7 +34,6 @@ def test_regular_yomtov_in_istael():
     assert actual.dict(exclude_none=True, by_alias=True) == expected
 
 
-@pytest.mark.yomtov
 def test_regular_yomtov_in_diaspora():
     expected = {
         'settings': {
@@ -71,7 +67,6 @@ def test_regular_yomtov_in_diaspora():
     assert actual.dict(exclude_none=True, by_alias=True) == expected
 
 
-@pytest.mark.yomtov
 def test_past_yomtov():
     expected = {
         'settings': {
@@ -102,7 +97,6 @@ def test_past_yomtov():
     assert actual.dict(exclude_none=True, by_alias=True) == expected
 
 
-@pytest.mark.yomtov
 def test_rosh_hashana_in_diaspora():
     expected = {
         'settings': {
@@ -136,7 +130,6 @@ def test_rosh_hashana_in_diaspora():
     assert actual.dict(exclude_none=True, by_alias=True) == expected
 
 
-@pytest.mark.yomtov
 def test_pre_shabbat_in_israel():
     expected = {
         'settings': {
@@ -170,7 +163,6 @@ def test_pre_shabbat_in_israel():
     assert actual.dict(exclude_none=True, by_alias=True) == expected
 
 
-@pytest.mark.yomtov
 def test_pre_shabbat_in_diaspora():
     expected = {
         'settings': {
@@ -208,7 +200,6 @@ def test_pre_shabbat_in_diaspora():
     assert actual.dict(exclude_none=True, by_alias=True) == expected
 
 
-@pytest.mark.yomtov
 def test_post_shabbat_in_israel():
     expected = {
         'settings': {
@@ -243,7 +234,6 @@ def test_post_shabbat_in_israel():
     assert actual.dict(exclude_none=True, by_alias=True) == expected
 
 
-@pytest.mark.yomtov
 def test_post_shabbat_in_diaspora():
     expected = {
         'settings': {

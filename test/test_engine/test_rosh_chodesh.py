@@ -1,12 +1,9 @@
 from datetime import date, datetime as dt
 
-import pytest
-
 from zmanim_api.engine.rosh_chodesh import get_next_rosh_chodesh
 from ..consts import PY_DATE
 
 
-@pytest.mark.rosh_chodesh
 def test_regular_rosh_chodesh():
     expected = {
         'settings': {'date': date.fromisoformat('2020-04-15')},
@@ -20,7 +17,6 @@ def test_regular_rosh_chodesh():
     assert actual.dict(exclude_none=True, by_alias=True) == expected
 
 
-@pytest.mark.rosh_chodesh
 def test_rosh_chodesh_before_rosh_hashana():
     expected = {
         'settings': {'date': date.fromisoformat('2020-09-30')},

@@ -65,3 +65,5 @@ if __name__ == '__main__':  # pragma: no cover
 
 # todo return zmanim calculation errors
 # todo translate: parshat hashavua names; daf yomi units;
+# todo no havdala on fast at 60.591389 90.305912
+

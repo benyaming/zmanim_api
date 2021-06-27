@@ -127,7 +127,6 @@ async def fast(
         lat: float = lat_param,
         lng: float = lng_param,
         elevation: int = elevation_param,
-        havdala: HavdalaChoices = havdala_param,
         date: Optional[str] = date_param
 ) -> Fast:
     parsed_date = validate_date_or_get_now(date, lat, lng)
@@ -136,8 +135,7 @@ async def fast(
         date_=parsed_date,
         lat=lat,
         lng=lng,
-        elevation=elevation,
-        havdala_opinion=havdala
+        elevation=elevation
     )
     return data
 

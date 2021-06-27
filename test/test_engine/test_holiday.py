@@ -1,13 +1,10 @@
 from datetime import date
 
-import pytest
-
 from zmanim_api.engine.holidays import get_simple_holiday
 from zmanim_api.api_helpers import SimpleHolidayChoices
 from ..consts import PY_DATE
 
 
-@pytest.mark.holiday
 def test_regular_holiday():
     expected = {
         'settings': {
@@ -21,7 +18,6 @@ def test_regular_holiday():
     assert actual.dict(exclude_none=True, by_alias=True) == expected
 
 
-@pytest.mark.holiday
 def test_yom_hashoah():
     expected = {
         'settings': {
@@ -35,7 +31,6 @@ def test_yom_hashoah():
     assert actual.dict(exclude_none=True, by_alias=True) == expected
 
 
-@pytest.mark.holiday
 def test_yom_hashoah_on_friday():
     expected = {
         'settings': {
@@ -49,7 +44,6 @@ def test_yom_hashoah_on_friday():
     assert actual.dict(exclude_none=True, by_alias=True) == expected
 
 
-@pytest.mark.holiday
 def test_yom_hashoah_on_sunday():
     expected = {
         'settings': {
@@ -63,7 +57,6 @@ def test_yom_hashoah_on_sunday():
     assert actual.dict(exclude_none=True, by_alias=True) == expected
 
 
-@pytest.mark.holiday
 def test_yom_hazikaron():
     expected = {
         'settings': {
@@ -77,7 +70,6 @@ def test_yom_hazikaron():
     assert actual.dict(exclude_none=True, by_alias=True) == expected
 
 
-@pytest.mark.holiday
 def test_yom_hazikaron_friday_yom_haatzmaut_shabbat():
     expected_1 = {
         'settings': {
@@ -100,7 +92,6 @@ def test_yom_hazikaron_friday_yom_haatzmaut_shabbat():
     assert actual_2.dict(exclude_none=True, by_alias=True) == expected_2
 
 
-@pytest.mark.holiday
 def test_yom_hazikaron_shabbat_yom_haatzmaut_sunday():
     expected_1 = {
         'settings': {
@@ -123,7 +114,6 @@ def test_yom_hazikaron_shabbat_yom_haatzmaut_sunday():
     assert actual_2.dict(exclude_none=True, by_alias=True) == expected_2
 
 
-@pytest.mark.holiday
 def test_yom_hazikaron_wednesdey_yom_haatzmaut_thursday():
     expected_1 = {
         'settings': {
@@ -144,4 +134,3 @@ def test_yom_hazikaron_wednesdey_yom_haatzmaut_thursday():
     actual_2 = get_simple_holiday(SimpleHolidayChoices.yom_haatzmaut.value, date(2022, 4, 1))
     assert actual_1.dict(exclude_none=True, by_alias=True) == expected_1
     assert actual_2.dict(exclude_none=True, by_alias=True) == expected_2
-

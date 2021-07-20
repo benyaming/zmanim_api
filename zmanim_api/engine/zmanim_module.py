@@ -1,5 +1,5 @@
-from typing import Dict, Union
-from datetime import date, datetime as dt, time, timedelta
+from typing import Optional
+from datetime import date, datetime as dt, time, timedelta, datetime
 
 import arrow
 import pytz
@@ -14,58 +14,95 @@ from zmanim_api.models import ZmanimRequest, ZmanimResponse, Settings, BooleanRe
 GEOMETRIC_ZENITH = 90
 
 
-_ZMANIM_CALCULATORS = {
-    'sunrise': 'sunrise',
-    'alos': 'alos',
-    'sof_zman_tefila_gra': 'sof_zman_tfila_gra',
-    'sof_zman_tefila_ma': 'sof_zman_tfila_mga',
-    'misheyakir_10_2': ['sunrise_offset_by_degrees', (GEOMETRIC_ZENITH + 10.2,)],
-    'sof_zman_shema_gra': 'sof_zman_shma_gra',
-    'sof_zman_shema_ma': 'sof_zman_shma_mga',
-    'chatzos': 'chatzos',
-    'mincha_ketana': 'mincha_ketana',
-    'mincha_gedola': 'mincha_gedola',
-    'plag_mincha': 'plag_hamincha',
-    'sunset': 'sunset',
-    'tzeis_8_5_degrees': 'tzais',
-    'tzeis_72_minutes': ('tzais', {'offset': 72}),
-    'tzeis_42_minutes': ('tzais', {'offset': 42}),
-    'tzeis_5_95_degrees': ('tzais', {'degrees': 5.95}),
-    'astronomical_hour_ma': 'shaah_zmanis_mga',
-    'astronomical_hour_gra': 'shaah_zmanis_gra',
-    'chatzot_laila': None
-}
+class ZmanimCalculator:
+    zc: ZmanimCalendar
+    jewish_date: str
 
+    def __init__(self, lat: float, lng: float, date_: date, elevation: float):
+        tz = get_tz(lat, lng)
 
-def _calculate_zmanim(calendar: ZmanimCalendar, settings: ZmanimRequest) -> Dict[str, Union[dt, time]]:
-    calculated_zmanim = {}
-    for zman_name, required in settings.dict().items():
-        if not required:
-            continue
-        method_name = _ZMANIM_CALCULATORS.get(zman_name)
-        if not method_name and zman_name != 'chatzot_laila':
-            continue
-        
-        if isinstance(method_name, tuple):
-            method_name, kwargs = method_name
-            zman_value: dt = getattr(calendar, method_name)(kwargs)
-        elif isinstance(method_name, list):
-            method_name, args = method_name
-            zman_value: dt = getattr(calendar, method_name)(*args)
-        elif method_name is None:  # chatzos laila case
-            chatzos = calendar.chatzos()
-            zman_value = chatzos + timedelta(hours=12) if chatzos else None
-        else:
-            zman_value: dt = getattr(calendar, method_name)()
+        jewish_date = JewishDate(date_).jewish_date
+        self.jewish_date = f'{jewish_date[0]}-{jewish_date[1]}-{jewish_date[2]}'
 
-        if isinstance(zman_value, dt):
-            calculated_zmanim[zman_name] = zman_value
-        elif isinstance(zman_value, float):
-            calculated_zmanim[zman_name] = arrow.get(int(zman_value / 1000)).time()
-        else:
-            calculated_zmanim[zman_name] = zman_value
+        location = GeoLocation('', lat, lng, tz, elevation)
+        self.zc = ZmanimCalendar(geo_location=location, date=date_)
 
-    return calculated_zmanim
+    @property
+    def sunrise(self) -> Optional[datetime]:
+        return self.zc.sunrise()
+
+    @property
+    def alos(self) -> Optional[datetime]:
+        return self.zc.alos()
+
+    @property
+    def sof_zman_tefila_gra(self) -> datetime:
+        return self.zc.sof_zman_tfila_gra()
+
+    @property
+    def sof_zman_tefila_ma(self) -> Optional[datetime]:
+        return self.zc.sof_zman_tfila_mga()
+
+    @property
+    def misheyakir_10_2(self) -> Optional[datetime]:
+        return self.zc.sunrise_offset_by_degrees(GEOMETRIC_ZENITH + 10.2)
+
+    @property
+    def sof_zman_shema_gra(self) -> datetime:
+        return self.zc.sof_zman_shma_gra()
+
+    @property
+    def sof_zman_shema_ma(self) -> datetime:
+        return self.zc.sof_zman_shma_mga()
+
+    @property
+    def chatzos(self) -> Optional[datetime]:
+        return self.zc.chatzos()
+
+    @property
+    def mincha_ketana(self) -> Optional[datetime]:
+        return self.zc.mincha_ketana()
+
+    @property
+    def mincha_gedola(self) -> Optional[datetime]:
+        return self.zc.mincha_gedola()
+
+    @property
+    def plag_mincha(self) -> Optional[datetime]:
+        return self.zc.plag_hamincha()
+
+    @property
+    def sunset(self) -> Optional[datetime]:
+        return self.zc.sunset()
+
+    @property
+    def tzeis_8_5_degrees(self) -> Optional[datetime]:
+        return self.zc.tzais()
+
+    @property
+    def tzeis_72_minutes(self) -> Optional[datetime]:
+        return self.zc.tzais({'offset': 72})
+
+    @property
+    def tzeis_42_minutes(self) -> Optional[datetime]:
+        return self.zc.tzais({'offset': 42})
+
+    @property
+    def tzeis_5_95_degrees(self) -> Optional[datetime]:
+        return self.zc.tzais({'degrees': 5.95})
+
+    @property
+    def astronomical_hour_ma(self) -> time:
+        return arrow.get(int(self.zc.shaah_zmanis_mga() / 1000)).time()
+
+    @property
+    def astronomical_hour_gra(self) -> time:
+        return arrow.get(int(self.zc.shaah_zmanis_gra() / 1000)).time()
+
+    @property
+    def chatzot_laila(self) -> Optional[datetime]:
+        chatzos = self.zc.chatzos()
+        return chatzos and chatzos + timedelta(hours=12)
 
 
 def get_zmanim(
@@ -75,16 +112,16 @@ def get_zmanim(
         elevation: float,
         settings: ZmanimRequest
 ) -> ZmanimResponse:
-    tz = get_tz(lat, lng)
+    zmanim_calc = ZmanimCalculator(lat, lng, date_, elevation)
 
-    jewish_date = JewishDate(date_).jewish_date
-    jewish_date = f'{jewish_date[0]}-{jewish_date[1]}-{jewish_date[2]}'
-    
-    location = GeoLocation('', lat, lng, tz, elevation)
-    calendar = ZmanimCalendar(geo_location=location, date=date_)
-    zmanim = _calculate_zmanim(calendar, settings)
+    zmanim = {}
+    for zman_name, is_active in settings.dict().items():
+        if not is_active:
+            continue
 
-    settings = Settings(date=date_, coordinates=(lat, lng), elevation=elevation, jewish_date=jewish_date)
+        zmanim[zman_name] = getattr(zmanim_calc, zman_name)
+
+    settings = Settings(date=date_, coordinates=(lat, lng), elevation=elevation, jewish_date=zmanim_calc.jewish_date)
     return ZmanimResponse(settings=settings, **zmanim)
 
 

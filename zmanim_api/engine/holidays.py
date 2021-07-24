@@ -1,5 +1,5 @@
 from typing import Optional
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 
 from zmanim.util.geo_location import GeoLocation
 from zmanim.zmanim_calendar import ZmanimCalendar
@@ -8,6 +8,16 @@ from zmanim.hebrew_calendar.jewish_calendar import JewishCalendar
 from ..utils import get_tz, is_diaspora
 from ..api_helpers import HAVDALA_PARAMS, HavdalaChoices
 from ..models import Holiday, YomTov, Fast, SimpleSettings, Settings
+
+
+def smart_candle_lighting(jc: JewishCalendar, zc: ZmanimCalendar) -> Optional[datetime]:
+    if not jc.is_tomorrow_assur_bemelacha():
+        return None
+
+    if jc.is_assur_bemelacha() and jc.gregorian_date.weekday() != 4:
+        return zc.tzais() or zc.chatzos() + timedelta(hours=12)
+    else:
+        return zc.candle_lighting()
 
 
 HOLYDAYS_AND_FASTS_DATES = {
@@ -198,12 +208,10 @@ def get_yom_tov(
 
     if (diaspora and not name == 'yom_kippur') or name == 'rosh_hashana':  # Y Y
         day_2_date = day_1_date + 1
-        # yt_dates.append(first_day + 1)
 
     last_yt_date = day_2_date or day_1_date
 
     if day_1_date.day_of_week == 1:  # S Y Y
-        # eve_date = day_1_date - 2
         shabbat_date = day_1_date - 1
     elif last_yt_date.day_of_week == 6:  # Y S / Y Y S
         shabbat_date = last_yt_date + 1
@@ -258,12 +266,14 @@ def get_yom_tov(
         data['day_1']['candle_lighting'] = eve_zmanim_calc.candle_lighting()
 
     if not day_2_date:
-
         data['day_1']['havdala'] = first_day_calc.tzais(havdala_params)
-        # return resp
     else:
         second_day_calc = ZmanimCalendar(cl, geo_location=location, date=day_2_date.gregorian_date)
-        data['day_2']['candle_lighting'] = first_day_calc.tzais(havdala_params)
+        if day_1_date.gregorian_date.weekday() == 4:
+            data['day_2']['candle_lighting'] = first_day_calc.candle_lighting()
+        else:
+            data['day_2']['candle_lighting'] = first_day_calc.tzais(havdala_params)
+        # data['day_2']['candle_lighting'] = smart_candle_lighting(day_2_date, second_day_calc)
         if not shabbat_date or shabbat_date < day_2_date:
             data['day_2']['havdala'] = second_day_calc.tzais(havdala_params)
 

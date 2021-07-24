@@ -278,3 +278,45 @@ def test_post_shabbat_in_diaspora():
         HavdalaChoices.tzeis_8_5_degrees
     )
     assert actual.dict(exclude_none=True, by_alias=True) == expected
+
+
+def test_second_yt_is_shabbat():
+    expected = {
+        'settings': {
+            'date': date.fromisoformat('2021-07-24'),
+            'cl_offset': 18,
+            'havdala_opinion': 'tzeis_8_5_degrees',
+            'coordinates': (55.63097, 37.628591),
+            'elevation': 0,
+            'yomtov_name': 'pesach'
+        },
+        'day_1': {
+            'date': date.fromisoformat('2022-04-16'),
+            'candle_lighting': dt.fromisoformat('2022-04-15T19:17:00.587041+03:00')
+          },
+        'day_2': {
+            'date': date.fromisoformat('2022-04-17'),
+            'candle_lighting': dt.fromisoformat('2022-04-16T20:37:44.000668+03:00'),
+            'havdala': dt.fromisoformat('2022-04-17T20:40:06.767369+03:00')
+        },
+        'pesach_part_2_day_1': {
+            'date': date.fromisoformat('2022-04-22'),
+            'candle_lighting': dt.fromisoformat('2022-04-21T19:29:03.967858+03:00')
+        },
+        'pesach_part_2_day_2': {
+            'date': date.fromisoformat('2022-04-23'),
+            'candle_lighting': dt.fromisoformat('2022-04-22T19:31:04.444159+03:00'),
+            'havdala': dt.fromisoformat('2022-04-23T20:54:39.137197+03:00')
+        }
+    }
+
+    actual = get_yom_tov(
+        YomTovChoices.pesach.value,
+        date(2021, 7, 24),
+        55.63097,
+        37.628591,
+        ZERO_ELEVATION,
+        18,
+        HavdalaChoices.tzeis_8_5_degrees
+    )
+    assert actual.dict(exclude_none=True, by_alias=True) == expected

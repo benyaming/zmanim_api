@@ -134,3 +134,16 @@ def test_yom_hazikaron_wednesdey_yom_haatzmaut_thursday():
     actual_2 = get_simple_holiday(SimpleHolidayChoices.yom_haatzmaut.value, date(2022, 4, 1))
     assert actual_1.dict(exclude_none=True, by_alias=True) == expected_1
     assert actual_2.dict(exclude_none=True, by_alias=True) == expected_2
+
+
+def test_holiday_ducing_holiday():
+    expected = {
+        'settings': {
+            'date': date.fromisoformat('2021-12-01'),
+            'holiday_name': 'chanukah'
+        },
+        'date': date.fromisoformat('2021-11-29')
+    }
+
+    actual = get_simple_holiday(SimpleHolidayChoices.chanukah.value, date(2021, 12, 1)).dict(exclude_none=True, by_alias=True)
+    assert actual == expected

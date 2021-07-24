@@ -30,6 +30,7 @@ def test_zmanim_endpoint():
         'astronomical_hour_ma': True,
         'astronomical_hour_gra': True
     }
+    json_for_empty_result = {k: False for k, _ in json.items()}
 
     expected = {
         'settings': {
@@ -61,11 +62,14 @@ def test_zmanim_endpoint():
         'astronomical_hour_gra': '01:04:53',
         'chatzot_laila': '2020-04-16T00:40:45.014150+03:00'
     }
+    expected_empty = {'settings': expected['settings']}
 
     resp = client.post('/zmanim', params=params, json=json)
+    empty_resp = client.post('/zmanim', params=params, json=json_for_empty_result)
 
     assert resp.status_code == 200
     assert resp.json() == expected
+    assert empty_resp.json() == expected_empty
 
 
 def test_shabbat_endpoint():

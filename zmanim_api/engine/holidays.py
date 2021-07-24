@@ -1,5 +1,5 @@
 from typing import Optional
-from datetime import date, timedelta, datetime
+from datetime import date, timedelta
 
 from zmanim.util.geo_location import GeoLocation
 from zmanim.zmanim_calendar import ZmanimCalendar
@@ -8,16 +8,6 @@ from zmanim.hebrew_calendar.jewish_calendar import JewishCalendar
 from ..utils import get_tz, is_diaspora
 from ..api_helpers import HAVDALA_PARAMS, HavdalaChoices
 from ..models import Holiday, YomTov, Fast, SimpleSettings, Settings
-
-
-def smart_candle_lighting(jc: JewishCalendar, zc: ZmanimCalendar) -> Optional[datetime]:
-    if not jc.is_tomorrow_assur_bemelacha():
-        return None
-
-    if jc.is_assur_bemelacha() and jc.gregorian_date.weekday() != 4:
-        return zc.tzais() or zc.chatzos() + timedelta(hours=12)
-    else:
-        return zc.candle_lighting()
 
 
 HOLYDAYS_AND_FASTS_DATES = {
@@ -71,48 +61,48 @@ def _get_first_day_date(name: str, date_: date, diaspora: bool = True) -> Jewish
     day, month = HOLYDAYS_AND_FASTS_DATES[name]
 
     now = JewishCalendar(date_)
-    calendar = JewishCalendar.from_jewish_date(now.jewish_year, month, day)
+    first_day_date = JewishCalendar.from_jewish_date(now.jewish_year, month, day)
 
-    if calendar < now:
+    if first_day_date < now:
         # in case of long holyday to protect from return next year holiday during current one
         # mooving backward to length of the holiday
         if name in LONG_HOLYDAYS:
             duration = LONG_HOLYDAYS[name][0] if diaspora else LONG_HOLYDAYS[name][1]
-            if now.back(duration) < calendar:
+            if now.back(duration) < first_day_date:
                 return _get_first_day_date(name, date_ - timedelta(days=duration), diaspora)
 
-        calendar = JewishCalendar.from_jewish_date(calendar.jewish_year + 1, month, day)
+        first_day_date = JewishCalendar.from_jewish_date(first_day_date.jewish_year + 1, month, day)
 
-    if month == 12 and calendar.is_jewish_leap_year():
-        calendar.forward(30)
+    if month == 12 and first_day_date.is_jewish_leap_year():
+        first_day_date.forward(30)
 
     # if yom hashoa felt on Friday, moove it to Thursday
-    if name == 'yom_hashoah' and calendar.day_of_week == 6:
-        calendar.forward(-1)
+    if name == 'yom_hashoah' and first_day_date.day_of_week == 6:
+        first_day_date.forward(-1)
 
     # if yom hashoa felt on Sunday, moove it to Monday
-    if name == 'yom_hashoah' and calendar.day_of_week == 1:
-        calendar.forward(1)
+    if name == 'yom_hashoah' and first_day_date.day_of_week == 1:
+        first_day_date.forward(1)
 
     # if yom hazikarom felt on thursday and yom haatzmaut on friday,
     # moove them one day to past
-    if (name == 'yom_hazikaron' and calendar.day_of_week == 5) or \
-       (name == 'yom_haatzmaut' and calendar.day_of_week == 6):
-        calendar.forward(-1)
+    if (name == 'yom_hazikaron' and first_day_date.day_of_week == 5) or \
+       (name == 'yom_haatzmaut' and first_day_date.day_of_week == 6):
+        first_day_date.forward(-1)
 
     # if yom hazikarom felt on friday and yom haatzmaut on shabbat,
     # moove them two days to past
-    if (name == 'yom_hazikaron' and calendar.day_of_week == 6) or \
-       (name == 'yom_haatzmaut' and calendar.day_of_week == 7):
-        calendar.forward(-2)
+    if (name == 'yom_hazikaron' and first_day_date.day_of_week == 6) or \
+       (name == 'yom_haatzmaut' and first_day_date.day_of_week == 7):
+        first_day_date.forward(-2)
 
     # if yom hazikarom felt on sunday and yom haatzmaut on monday,
     # moove them one day to future
-    if (name == 'yom_hazikaron' and calendar.day_of_week == 1) or \
-       (name == 'yom_haatzmaut' and calendar.day_of_week == 2):
-        calendar.forward(1)
+    if (name == 'yom_hazikaron' and first_day_date.day_of_week == 1) or \
+       (name == 'yom_haatzmaut' and first_day_date.day_of_week == 2):
+        first_day_date.forward(1)
 
-    return calendar
+    return first_day_date
 
 
 def fast(

@@ -44,6 +44,44 @@ def test_shabbat_with_late_cl_warning():
     assert resp.dict(exclude_none=True, by_alias=True) == expected
 
 
+def test_shabbat_with_tzeit_by_chatzot_layla():
+    expected = {
+        'candle_lighting': dt.fromisoformat('2021-07-30T22:49:00+02:00'),
+        'havdala': dt.fromisoformat('2021-08-01T00:22:00+02:00'),
+        'settings': {
+            'date': date.fromisoformat('2021-07-24'),
+            'cl_offset': 18,
+            'havdala_opinion': 'tzeis_8_5_degrees',
+            'coordinates': (69.77, 25.01),
+            'elevation': 0
+        },
+        'torah_part': 'eikev',
+        'late_cl_warning': True
+    }
+
+    resp = get_shabbat(69.77, 25.01, ZERO_ELEVATION, CL_OFFSET, HavdalaChoices.tzeis_8_5_degrees,
+                       date(2021, 7, 24))
+    assert resp.dict(exclude_none=True, by_alias=True) == expected
+
+
+def test_shabbat_with_polar_daynight():
+    expected = {
+        'settings': {
+            'date': date.fromisoformat('2021-07-25'),
+            'cl_offset': 18,
+            'havdala_opinion': 'tzeis_8_5_degrees',
+            'coordinates': (76.60, 103.45),
+            'elevation': 0
+        },
+        'torah_part': 'eikev',
+        'late_cl_warning': True
+    }
+
+    resp = get_shabbat(76.60, 103.45, ZERO_ELEVATION, CL_OFFSET, HavdalaChoices.tzeis_8_5_degrees,
+                       date(2021, 7, 25))
+    assert resp.dict(exclude_none=True, by_alias=True) == expected
+
+
 def test_shabbat_with_different_parsha():
     expected_1 = {
         'candle_lighting': dt.fromisoformat('2020-06-05T19:26:00+03:00'),

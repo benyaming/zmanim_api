@@ -1,4 +1,4 @@
-from datetime import datetime as dt, timedelta, date
+from datetime import timedelta, date
 
 from zmanim.util.geo_location import GeoLocation
 from zmanim.zmanim_calendar import ZmanimCalendar
@@ -19,7 +19,6 @@ def get_shabbat(
         havdala: HavdalaChoices,
         date_: date
 ) -> Shabbat:
-    # _ = get_translator(lang)
     # 1. get friday nearest to the date
     friday = get_next_weekday(date_, 4)
     saturday = friday + timedelta(days=1)
@@ -31,11 +30,9 @@ def get_shabbat(
     saturday_calendar = ZmanimCalendar(candle_lighting_offset=cl_offset, geo_location=location, date=saturday)
 
     cl_time = friday_calendar.candle_lighting()
-    havdala_time = friday_calendar.candle_lighting()
-
     havdala_params = HAVDALA_PARAMS[havdala.name]
-
     tzais = saturday_calendar.tzais(havdala_params)
+
     if tzais:
         havdala_time = tzais
     elif saturday_calendar.chatzos():  # summer nights on north

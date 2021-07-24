@@ -1,15 +1,16 @@
 from datetime import datetime as dt, date, timedelta
+from typing import Optional
 
 from zmanim.hebrew_calendar.jewish_calendar import JewishCalendar
 
 from ..models import RoshChodesh, SimpleSettings
 
 
-def get_next_rosh_chodesh(date_: date = None) -> RoshChodesh:
+def get_next_rosh_chodesh(date_: date = None, original_date: Optional[date] = None) -> RoshChodesh:
     calendar = JewishCalendar(date_ or dt.now())
 
     if calendar.is_rosh_chodesh():
-        return get_next_rosh_chodesh(date_ + timedelta(days=-1))
+        return get_next_rosh_chodesh(date_ + timedelta(days=-1), original_date or date_)
 
     if calendar.jewish_month == 6:
         return get_next_rosh_chodesh(date_ + timedelta(days=calendar.days_in_jewish_month()))
@@ -32,6 +33,5 @@ def get_next_rosh_chodesh(date_: date = None) -> RoshChodesh:
         'duration': 1 if month_length == 29 else 2,
         'molad': [molad_iso, molad.molad_chalakim]
     }
-    settings = SimpleSettings(date=date_ or dt.now())
+    settings = SimpleSettings(date=original_date or date_ or dt.now())
     return RoshChodesh(settings=settings, **rh_data)
-

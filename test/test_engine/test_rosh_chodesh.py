@@ -17,6 +17,19 @@ def test_regular_rosh_chodesh():
     assert actual.dict(exclude_none=True, by_alias=True) == expected
 
 
+def test_rosh_chodesh_during_rosh_chodesh():
+    expected = {
+        'settings': {'date': date.fromisoformat('2020-04-25')},
+        'month_name': 'iyar',
+        'days': [date.fromisoformat('2020-04-24'), date.fromisoformat('2020-04-25')],
+        'duration': 2,
+        'molad': (dt.fromisoformat('2020-04-22T22:58'), 12)
+    }
+
+    actual = get_next_rosh_chodesh(date(2020, 4, 25))
+    assert actual.dict(exclude_none=True, by_alias=True) == expected
+
+
 def test_rosh_chodesh_before_rosh_hashana():
     expected = {
         'settings': {'date': date.fromisoformat('2020-09-30')},

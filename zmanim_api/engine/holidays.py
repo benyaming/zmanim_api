@@ -61,48 +61,48 @@ def _get_first_day_date(name: str, date_: date, diaspora: bool = True) -> Jewish
     day, month = HOLYDAYS_AND_FASTS_DATES[name]
 
     now = JewishCalendar(date_)
-    calendar = JewishCalendar.from_jewish_date(now.jewish_year, month, day)
+    first_day_date = JewishCalendar.from_jewish_date(now.jewish_year, month, day)
 
-    if calendar < now:
+    if first_day_date < now:
         # in case of long holyday to protect from return next year holiday during current one
         # mooving backward to length of the holiday
         if name in LONG_HOLYDAYS:
             duration = LONG_HOLYDAYS[name][0] if diaspora else LONG_HOLYDAYS[name][1]
-            if now.back(duration) < calendar:
+            if now.back(duration) < first_day_date:
                 return _get_first_day_date(name, date_ - timedelta(days=duration), diaspora)
 
-        calendar = JewishCalendar.from_jewish_date(calendar.jewish_year + 1, month, day)
+        first_day_date = JewishCalendar.from_jewish_date(first_day_date.jewish_year + 1, month, day)
 
-    if month == 12 and calendar.is_jewish_leap_year():
-        calendar.forward(30)
+    if month == 12 and first_day_date.is_jewish_leap_year():
+        first_day_date.forward(30)
 
     # if yom hashoa felt on Friday, moove it to Thursday
-    if name == 'yom_hashoah' and calendar.day_of_week == 6:
-        calendar.forward(-1)
+    if name == 'yom_hashoah' and first_day_date.day_of_week == 6:
+        first_day_date.forward(-1)
 
     # if yom hashoa felt on Sunday, moove it to Monday
-    if name == 'yom_hashoah' and calendar.day_of_week == 1:
-        calendar.forward(1)
+    if name == 'yom_hashoah' and first_day_date.day_of_week == 1:
+        first_day_date.forward(1)
 
     # if yom hazikarom felt on thursday and yom haatzmaut on friday,
     # moove them one day to past
-    if (name == 'yom_hazikaron' and calendar.day_of_week == 5) or \
-       (name == 'yom_haatzmaut' and calendar.day_of_week == 6):
-        calendar.forward(-1)
+    if (name == 'yom_hazikaron' and first_day_date.day_of_week == 5) or \
+       (name == 'yom_haatzmaut' and first_day_date.day_of_week == 6):
+        first_day_date.forward(-1)
 
     # if yom hazikarom felt on friday and yom haatzmaut on shabbat,
     # moove them two days to past
-    if (name == 'yom_hazikaron' and calendar.day_of_week == 6) or \
-       (name == 'yom_haatzmaut' and calendar.day_of_week == 7):
-        calendar.forward(-2)
+    if (name == 'yom_hazikaron' and first_day_date.day_of_week == 6) or \
+       (name == 'yom_haatzmaut' and first_day_date.day_of_week == 7):
+        first_day_date.forward(-2)
 
     # if yom hazikarom felt on sunday and yom haatzmaut on monday,
     # moove them one day to future
-    if (name == 'yom_hazikaron' and calendar.day_of_week == 1) or \
-       (name == 'yom_haatzmaut' and calendar.day_of_week == 2):
-        calendar.forward(1)
+    if (name == 'yom_hazikaron' and first_day_date.day_of_week == 1) or \
+       (name == 'yom_haatzmaut' and first_day_date.day_of_week == 2):
+        first_day_date.forward(1)
 
-    return calendar
+    return first_day_date
 
 
 def fast(
@@ -198,12 +198,10 @@ def get_yom_tov(
 
     if (diaspora and not name == 'yom_kippur') or name == 'rosh_hashana':  # Y Y
         day_2_date = day_1_date + 1
-        # yt_dates.append(first_day + 1)
 
     last_yt_date = day_2_date or day_1_date
 
     if day_1_date.day_of_week == 1:  # S Y Y
-        # eve_date = day_1_date - 2
         shabbat_date = day_1_date - 1
     elif last_yt_date.day_of_week == 6:  # Y S / Y Y S
         shabbat_date = last_yt_date + 1
@@ -258,12 +256,14 @@ def get_yom_tov(
         data['day_1']['candle_lighting'] = eve_zmanim_calc.candle_lighting()
 
     if not day_2_date:
-
         data['day_1']['havdala'] = first_day_calc.tzais(havdala_params)
-        # return resp
     else:
         second_day_calc = ZmanimCalendar(cl, geo_location=location, date=day_2_date.gregorian_date)
-        data['day_2']['candle_lighting'] = first_day_calc.tzais(havdala_params)
+        if day_1_date.gregorian_date.weekday() == 4:
+            data['day_2']['candle_lighting'] = first_day_calc.candle_lighting()
+        else:
+            data['day_2']['candle_lighting'] = first_day_calc.tzais(havdala_params)
+        # data['day_2']['candle_lighting'] = smart_candle_lighting(day_2_date, second_day_calc)
         if not shabbat_date or shabbat_date < day_2_date:
             data['day_2']['havdala'] = second_day_calc.tzais(havdala_params)
 

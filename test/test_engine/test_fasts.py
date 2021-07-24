@@ -11,7 +11,7 @@ def test_regular_fast():
             'date': date.fromisoformat('2020-04-15'),
             'coordinates': (32.09, 34.86),
             'elevation': 0,
-            'fast_name': "fast_9_av"
+            'fast_name': 'fast_9_av'
         },
         'moved_fast': False,
         'fast_start': dt.fromisoformat('2020-07-29T19:39:46.806374+03:00'),
@@ -37,7 +37,7 @@ def test_moved_fast_esther():
             'date': date.fromisoformat('2024-01-15'),
             'coordinates': (32.09, 34.86),
             'elevation': 0,
-            'fast_name': "fast_esther"
+            'fast_name': 'fast_esther'
         },
         'moved_fast': True,
         'fast_start': dt.fromisoformat('2024-03-21T04:30:13.115829+02:00'),
@@ -62,7 +62,7 @@ def test_moved_fast_tammuz_and_av():
             'date': date.fromisoformat('2019-01-15'),
             'coordinates': (32.09, 34.86),
             'elevation': 0,
-            'fast_name': "fast_17_tammuz"
+            'fast_name': 'fast_17_tammuz'
         },
         'moved_fast': True,
         'fast_start': dt.fromisoformat('2019-07-21T04:23:50.558258+03:00'),
@@ -75,7 +75,7 @@ def test_moved_fast_tammuz_and_av():
             'date': date.fromisoformat('2019-01-15'),
             'coordinates': (32.09, 34.86),
             'elevation': 0,
-            'fast_name': "fast_9_av"
+            'fast_name': 'fast_9_av'
         },
         'moved_fast': True,
         'fast_start': dt.fromisoformat('2019-08-10T19:30:10.266510+03:00'),
@@ -104,3 +104,24 @@ def test_moved_fast_tammuz_and_av():
     assert actual_2.dict(exclude_none=True, by_alias=True) == expected_2
 
 
+def test_9_of_av_in_north():
+    expected = {
+        'settings': {
+            'date': date.fromisoformat('2021-07-24'),
+            'coordinates': (63.44563381372263, 13.49966869597185),
+            'elevation': 0,
+            'fast_name': 'fast_17_tammuz'
+        },
+        'moved_fast': True,
+        'fast_start': dt.fromisoformat('2022-07-17T01:11:01.899904+02:00'),
+        'havdala_42_min': dt.fromisoformat('2022-07-17T23:29:10.694261+02:00')
+    }
+
+    actual = fast(
+        FastsChoices.fast_17_tammuz.value,
+        date(2021, 7, 24),
+        63.44563381372263,
+        13.49966869597185,
+        ZERO_ELEVATION,
+    ).dict(exclude_none=True, by_alias=True)
+    assert actual == expected

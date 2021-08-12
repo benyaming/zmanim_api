@@ -21,6 +21,7 @@ julian = "*"
 pytest = "*"
 betterlogging = "*"
 sentry-sdk = "==1.1.0"
+typing_extensions = "*"
 
 [requires]
 python_version = "3.9"

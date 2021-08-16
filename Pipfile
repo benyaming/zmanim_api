@@ -9,7 +9,7 @@ requests = "*"
 coverage = "*"
 
 [packages]
-fastapi = "*"
+fastapi = "==0.67.0"
 pydantic = '*'
 uvicorn = "*"
 pytz = "*"

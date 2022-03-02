@@ -61,6 +61,10 @@ def _get_first_day_date(name: str, date_: date, diaspora: bool = True) -> Jewish
     day, month = HOLYDAYS_AND_FASTS_DATES[name]
 
     now = JewishCalendar(date_)
+
+    if now.is_jewish_leap_year() and month == 12:
+        month = 13
+
     first_day_date = JewishCalendar.from_jewish_date(now.jewish_year, month, day)
 
     if first_day_date < now:

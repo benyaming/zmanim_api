@@ -147,3 +147,15 @@ def test_holiday_ducing_holiday():
 
     actual = get_simple_holiday(SimpleHolidayChoices.chanukah.value, date(2021, 12, 1)).dict(exclude_none=True, by_alias=True)
     assert actual == expected
+
+
+def test_purim_on_first_adar():
+    expected = {
+        'settings': {
+            'date': date.fromisoformat('2022-03-02'),
+            'holiday_name': 'purim'
+        },
+        'date': date.fromisoformat('2022-03-17')
+    }
+    actual = get_simple_holiday(SimpleHolidayChoices.purim.value, date(2022, 3, 2)).dict(exclude_none=True, by_alias=True)
+    assert actual == expected

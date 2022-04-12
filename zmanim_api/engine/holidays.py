@@ -259,9 +259,11 @@ def get_yom_tov(
     else:
         data['day_1']['candle_lighting'] = eve_zmanim_calc.candle_lighting()
 
-    if not day_2_date and not shabbat_date:
-        data['day_1']['havdala'] = first_day_calc.tzais(havdala_params)
-    if day_2_date:
+    if not day_2_date:
+        if not shabbat_term or shabbat_term == 'pre_shabbat':
+            data['day_1']['havdala'] = first_day_calc.tzais(havdala_params)
+
+    else:
         second_day_calc = ZmanimCalendar(cl, geo_location=location, date=day_2_date.gregorian_date)
         if day_1_date.gregorian_date.weekday() == 4:
             data['day_2']['candle_lighting'] = first_day_calc.candle_lighting()

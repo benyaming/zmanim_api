@@ -212,8 +212,7 @@ def test_post_shabbat_in_israel():
         },
         'day_1': {
             'date': date.fromisoformat('2020-05-29'),
-            'candle_lighting': dt.fromisoformat('2020-05-28T19:21:50.464019+03:00'),
-            'havdala': dt.fromisoformat('2020-05-29T20:22:02.022466+03:00')
+            'candle_lighting': dt.fromisoformat('2020-05-28T19:21:50.464019+03:00')
         },
         'post_shabbat': {
             'date': date.fromisoformat('2020-05-30'),
@@ -293,7 +292,7 @@ def test_second_yt_is_shabbat():
         'day_1': {
             'date': date.fromisoformat('2022-04-16'),
             'candle_lighting': dt.fromisoformat('2022-04-15T19:17:00.587041+03:00')
-          },
+        },
         'day_2': {
             'date': date.fromisoformat('2022-04-17'),
             'candle_lighting': dt.fromisoformat('2022-04-16T20:37:44.000668+03:00'),
@@ -315,6 +314,44 @@ def test_second_yt_is_shabbat():
         date(2021, 7, 24),
         55.63097,
         37.628591,
+        ZERO_ELEVATION,
+        18,
+        HavdalaChoices.tzeis_8_5_degrees
+    )
+    assert actual.dict(exclude_none=True, by_alias=True) == expected
+
+
+def test_peesach_part_2_post_shabbat_in_istael():
+    expected = {
+        'settings': {
+            'date': date.fromisoformat('2022-04-12'),
+            'cl_offset': 18,
+            'havdala_opinion': 'tzeis_8_5_degrees',
+            'coordinates': (32.08335, 34.883325),
+            'elevation': 0,
+            "yomtov_name": "pesach"
+        },
+        'day_1': {
+            "date": date.fromisoformat('2022-04-16'),
+            "candle_lighting": dt.fromisoformat('2022-04-15T18:51:39.633162+03:00'),
+            "havdala": dt.fromisoformat('2022-04-16T19:47:54.176159+03:00')
+        },
+        'pesach_part_2_day_1': {
+            "date": date.fromisoformat('2022-04-22'),
+            "candle_lighting": dt.fromisoformat('2022-04-21T18:55:51.226349+03:00')
+        },
+        'pesach_part_2_post_shabat': {
+            'date': date.fromisoformat('2022-04-23'),
+            'candle_lighting': dt.fromisoformat('2022-04-22T18:56:33.479101+03:00'),
+            'havdala': dt.fromisoformat('2022-04-23T19:53:23.397083+03:00')
+        }
+    }
+
+    actual = get_yom_tov(
+        YomTovChoices.pesach.value,
+        date(2022, 4, 12),
+        32.08335,
+        34.883325,
         ZERO_ELEVATION,
         18,
         HavdalaChoices.tzeis_8_5_degrees

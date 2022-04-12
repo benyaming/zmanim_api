@@ -106,6 +106,10 @@ class Holiday(BaseModel):
 class YomTov(BaseModel):
     settings: Settings
     pre_shabbat: Optional[AsurBeMelachaDay] = None
+
+    pesach_eating_chanetz_till: Optional[datetime] = None
+    pesach_burning_chanetz_till: Optional[datetime] = None
+
     day_1: AsurBeMelachaDay
     day_2: Optional[AsurBeMelachaDay] = None
     post_shabbat: Optional[AsurBeMelachaDay] = None

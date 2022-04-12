@@ -281,6 +281,18 @@ def get_yom_tov(
             'pesach_part_2_day_2': part_2.day_2,
             'pesach_part_2_post_shabat': part_2.pesach_part_2_post_shabat
         }
+
+        data['pesach_eating_chanetz_till'] = eve_zmanim_calc._shaos_into_day(
+            eve_zmanim_calc.elevation_adjusted_sunrise(),
+            eve_zmanim_calc.elevation_adjusted_sunset(),
+            4
+        )
+        data['pesach_burning_chanetz_till'] = eve_zmanim_calc._shaos_into_day(
+            eve_zmanim_calc.elevation_adjusted_sunrise(),
+            eve_zmanim_calc.elevation_adjusted_sunset(),
+            5
+        )
+
     if name == 'pesach_2' and shabbat_term in data:
         data['pesach_part_2_post_shabat'] = data.pop(shabbat_term)
 

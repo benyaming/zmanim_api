@@ -243,6 +243,8 @@ def test_post_shabbat_in_diaspora():
             'elevation': 0,
             'yomtov_name': 'pesach'
         },
+        'pesach_burning_chanetz_till': dt.fromisoformat('2020-04-08T11:23:16:659939+03:00'),
+        'pesach_eating_chanetz_till': dt.fromisoformat('2020-04-08T10:14:58:519048+03:00'),
         'day_1': {
             'date': date.fromisoformat('2020-04-09'),
             'candle_lighting': dt.fromisoformat('2020-04-08T19:03:23.646179+03:00')
@@ -289,6 +291,8 @@ def test_second_yt_is_shabbat():
             'elevation': 0,
             'yomtov_name': 'pesach'
         },
+        'pesach_burning_chanetz_till': dt.fromisoformat('2022-04-15T11:19:24:184815+03:00'),
+        'pesach_eating_chanetz_till': dt.fromisoformat('2022-04-15T10:08:36:127354+03:00'),
         'day_1': {
             'date': date.fromisoformat('2022-04-16'),
             'candle_lighting': dt.fromisoformat('2022-04-15T19:17:00.587041+03:00')
@@ -331,6 +335,8 @@ def test_peesach_part_2_post_shabbat_in_istael():
             'elevation': 0,
             "yomtov_name": "pesach"
         },
+        'pesach_burning_chanetz_till': dt.fromisoformat('2022-04-15T11:35:57:473214+03:00'),
+        'pesach_eating_chanetz_till': dt.fromisoformat('2022-04-15T10:31:08:593221+03:00'),
         'day_1': {
             "date": date.fromisoformat('2022-04-16'),
             "candle_lighting": dt.fromisoformat('2022-04-15T18:51:39.633162+03:00'),

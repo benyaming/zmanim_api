@@ -1,0 +1,8 @@
+GET http://localhost:8000/yom_tov?
+    lat=32.08335 &
+    lng=34.883325 &
+    yomtov_name=pesach &
+    cl=18 &
+    havdala=tzeis_8_5_degrees
+
+###

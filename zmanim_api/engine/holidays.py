@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Tuple
 from datetime import date, timedelta
 
 from zmanim.util.geo_location import GeoLocation
@@ -54,6 +54,12 @@ LONG_HOLYDAYS = {
     'chanukah': (8, 8),
     'pesach': (9, 8),
     'shavuot': (2, 1)
+}
+
+MOOVABLE_DAYS = {
+    'fast_17_tammuz',
+    'fast_9_av',
+    'fast_gedalia'
 }
 
 
@@ -123,6 +129,16 @@ def fast(
     data = {'moved_fast': False}
 
     fast_date = _get_first_day_date(name, date_, diaspora)
+    if name in MOOVABLE_DAYS:
+        if fast_date.gregorian_date.weekday() == 5:
+            # Deferred fast in the future
+            fast_date.forward(1)
+            data['moved_fast'] = True
+        elif date_.year != fast_date.gregorian_year:
+            # Probably today is deferred fast
+            previous_day = _get_first_day_date(name, date_ - timedelta(days=1), diaspora)
+            if date_.year == previous_day.gregorian_year and previous_day.gregorian_date.weekday() == 5:
+                fast_date = previous_day
 
     # Deferred fasts
     if name in ('fast_gedalia', 'fast_17_tammuz', 'fast_9_av') and fast_date.day_of_week == 7:

@@ -16,9 +16,11 @@ pytz = "2023.3"
 arrow = "1.2.3"
 timezonefinder = "6.2.0"
 zmanim = "0.3.1"
-pytest = "7.3.0"
 betterlogging = "0.2.1"
 sentry-sdk = "1.19.1"
+
+[tool.poetry.group.test.dependencies]
+pytest = "7.3.0"
 httpx = "0.24.0"
 
 

@@ -38,7 +38,7 @@ Simple high-level api for all features of hebrew calendar.
 
 ### Built With
 
-* [Python 3.7](https://www.python.org/downloads/release/python-377/)
+* [Python 3.11](https://www.python.org/downloads/release/python-311/)
 * [FastAPI](https://github.com/tiangolo/fastapi)
 * [KosherJava's](https://github.com/KosherJava/zmanim) [python port](https://github.com/pinnymz/python-zmanim)
 
@@ -56,14 +56,14 @@ To get a local copy up and running follow these simple steps.
 
 #### Python
 1) Clone/fork the repo
-2) Use pipenv for build environment and install dependencies: `pipenv install`
+2) Use poetry for build environment and install dependencies: `poetry install`
 3) Go to project folder: `cd %repo_location%/zmanim_api`
 4) Run `python main.py`
 5) Open http://localhost:8000 in your browser to explore the swagger
 
 ### Tests
 Run tests: `pytest test/`  
-Run with coverage: `coverage run -m pytest -v test/` or `pipenv run tests`
+Run with coverage: `coverage run -m pytest -v test/` or `coverage xml`
 
 
 

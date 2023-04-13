@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "zmanim-api"
+version = "0.1.0"
+description = ""
+authors = ["Benyamin Ginzburg <benyomin.94@gmail.com>"]
+readme = "README.md"
+packages = [{include = "zmanim_api"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+fastapi = {  version = "0.95.0" }
+pydantic = "1.10.7"
+uvicorn = "0.21.1"
+pytz = "2023.3"
+arrow = "1.2.3"
+timezonefinder = "6.2.0"
+zmanim = "0.3.1"
+pytest = "7.3.0"
+betterlogging = "0.2.1"
+sentry-sdk = "1.19.1"
+httpx = "0.24.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

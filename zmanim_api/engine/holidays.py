@@ -52,7 +52,8 @@ LONG_HOLYDAYS = {
     'succot': (7, 6),
     'shmini_atzeres': (2, 1),
     'chanukah': (8, 8),
-    'pesach': (9, 8),
+    'pesach': (8, 7),
+    # 'pesach_2': (2, 1),
     'shavuot': (2, 1)
 }
 

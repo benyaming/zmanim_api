@@ -104,6 +104,53 @@ def test_moved_fast_tammuz_and_av():
     assert actual_2.dict(exclude_none=True, by_alias=True) == expected_2
 
 
+def test_day_after_moved_fast_tammuz_and_av():
+    expected_1 = {
+        'settings': {
+            'date': date.fromisoformat('2022-07-17'),
+            'coordinates': (32.09, 34.86),
+            'elevation': 0,
+            'fast_name': 'fast_17_tammuz'
+        },
+        'moved_fast': True,
+        'fast_start': dt.fromisoformat('2022-07-17T04:20:45.436601+03:00'),
+        'havdala_42_min': dt.fromisoformat('2022-07-17T20:29:10.152776+03:00'),
+        'havdala_5_95_dgr': dt.fromisoformat('2022-07-17T20:14:25.670857+03:00'),
+        'havdala_8_5_dgr': dt.fromisoformat('2022-07-17T20:28:24.129112+03:00')
+    }
+    expected_2 = {
+        'settings': {
+            'date': date.fromisoformat('2022-08-07'),
+            'coordinates': (32.09, 34.86),
+            'elevation': 0,
+            'fast_name': 'fast_9_av'
+        },
+        'moved_fast': True,
+        'fast_start': dt.fromisoformat('2022-08-06T19:33:38.618130+03:00'),
+        'chatzot': dt.fromisoformat('2022-08-07T12:46:08.569260+03:00'),
+        'havdala_42_min': dt.fromisoformat('2022-08-07T20:14:44.393678+03:00'),
+        'havdala_5_95_dgr': dt.fromisoformat('2022-08-07T19:58:43.183910+03:00'),
+        'havdala_8_5_dgr': dt.fromisoformat('2022-08-07T20:11:55.916590+03:00')
+    }
+    actual_1 = fast(
+        FastsChoices.fast_17_tammuz.value,
+        date(2022, 7, 17),
+        LAT,
+        LNG,
+        ZERO_ELEVATION
+    )
+    actual_2 = fast(
+        FastsChoices.fast_9_av.value,
+        date(2022, 8, 7),
+        LAT,
+        LNG,
+        ZERO_ELEVATION,
+    )
+
+    assert actual_1.dict(exclude_none=True, by_alias=True) == expected_1
+    assert actual_2.dict(exclude_none=True, by_alias=True) == expected_2
+
+
 def test_9_of_av_in_north():
     expected = {
         'settings': {

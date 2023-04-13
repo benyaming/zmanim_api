@@ -13,13 +13,16 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.9'
-      - uses: dschep/install-pipenv-action@v1
+          python-version: '3.11'
+      - uses: abatilo/actions-poetry@v2
+        with:
+          poetry-version: '1.2.1'
       - name: Install requirements
-        run: pipenv install --dev
+        run: poetry install --with dev
+
       - name: Run tests
         run: |
-          pipenv run tests
-          pipenv run xml
+          poetry run coverage run -m pytest -v test/
+          poetry run coverage xml
       - name: Codecov upload
         run: bash <(curl -s https://codecov.io/bash)

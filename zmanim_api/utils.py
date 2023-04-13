@@ -1,8 +1,10 @@
+import functools
 from datetime import date, timedelta
 
 from timezonefinder import TimezoneFinder
 
 
+@functools.cache
 def get_tz(lat: float, lng: float) -> str:
     """ Calculates timezone from coordinates """
     tf = TimezoneFinder()
@@ -10,6 +12,11 @@ def get_tz(lat: float, lng: float) -> str:
 
     if tz == 'Asia/Hebron':
         tz = 'Asia/Jerusalem'
+
+    # dateutil still not supports new 'Europe/Kyiv' timezone, thus...
+    if tz == 'Europe/Kyiv':
+        tz = 'Europe/Kiev'
+
     return tz
 
 

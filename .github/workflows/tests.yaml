@@ -23,6 +23,6 @@ jobs:
       - name: Run tests
         run: |
           poetry run coverage run -m pytest -v test/
-          coverage xml
+          poetry run coverage xml
       - name: Codecov upload
         run: bash <(curl -s https://codecov.io/bash)

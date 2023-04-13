@@ -22,7 +22,7 @@ jobs:
 
       - name: Run tests
         run: |
-          python -m coverage run -m pytest -v test/
-          xml = "coverage xml"
+          coverage run -m pytest -v test/
+          coverage xml
       - name: Codecov upload
         run: bash <(curl -s https://codecov.io/bash)

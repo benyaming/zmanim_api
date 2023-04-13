@@ -19,7 +19,7 @@ zmanim = "0.3.1"
 betterlogging = "0.2.1"
 sentry-sdk = "1.19.1"
 
-[tool.poetry.group.test.dependencies]
+[tool.poetry.group.dev.dependencies]
 pytest = "7.3.0"
 httpx = "0.24.0"
 coverage = "7.2.3"

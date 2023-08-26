@@ -35,7 +35,7 @@ date_param = Query(None, description=ds.date)
 dt_param = Query(None, description=ds.dt)
 lat_param = Query(32.09, description=ds.lat, ge=-90, le=90)
 lng_param = Query(34.86, description=ds.lng, ge=-180, le=180)
-elevation_param = Query(0, description='', ge=0)
+elevation_param = Query(0, description='')
 havdala_param = Query(HavdalaChoices.tzeis_8_5_degrees, description='tzeit')
 
 

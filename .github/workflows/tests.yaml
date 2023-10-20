@@ -18,7 +18,7 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install requirements
-        run: pdm install --dev
+        run: pdm install -G :all
 
       - name: Run tests
         run: |

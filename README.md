@@ -56,7 +56,7 @@ To get a local copy up and running follow these simple steps.
 
 #### Python
 1) Clone/fork the repo
-2) Use poetry for build environment and install dependencies: `poetry install`
+2) Use PDM for build environment and install dependencies: `pdm install`
 3) Go to project folder: `cd %repo_location%/zmanim_api`
 4) Run `python main.py`
 5) Open http://localhost:8000 in your browser to explore the swagger

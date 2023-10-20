@@ -23,7 +23,7 @@ readme = "README.md"
 license = {text = "GPL-3.0"}
 
 
-[project.group.dev.dependencies]
+[tool.pdm.dev-dependencies]
 pytest = "7.3.0"
 httpx = "0.24.0"
 coverage = "7.2.3"

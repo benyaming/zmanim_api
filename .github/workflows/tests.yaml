@@ -14,15 +14,15 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: '3.11'
-      - uses: abatilo/actions-poetry@v2
+      - uses: pdm-project/setup-pdm@v3
         with:
-          poetry-version: '1.2.1'
+          python-version: '3.11'
       - name: Install requirements
-        run: poetry install --with dev
+        run: pdm install --with dev
 
       - name: Run tests
         run: |
-          poetry run coverage run -m pytest -v test/
-          poetry run coverage xml
+          pdm run tests
+          pdm run xml
       - name: Codecov upload
         run: bash <(curl -s https://codecov.io/bash)

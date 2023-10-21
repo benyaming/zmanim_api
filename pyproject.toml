@@ -23,8 +23,8 @@ readme = "README.md"
 license = {text = "GPL-3.0"}
 
 
-[project.optional-dependencies]
-dev = [
+[tool.pdm.dev-dependencies]
+test = [
     "pytest==7.3.0",
     "httpx==0.24.0",
     "coverage==7.2.3",

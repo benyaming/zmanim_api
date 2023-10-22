@@ -1,8 +1,8 @@
+import zoneinfo
 from typing import Optional
 from datetime import date, datetime as dt, time, timedelta, datetime
 
 import arrow
-import pytz
 from zmanim.util.geo_location import GeoLocation
 from zmanim.zmanim_calendar import ZmanimCalendar
 from zmanim.hebrew_calendar.jewish_date import JewishDate
@@ -115,7 +115,7 @@ def get_zmanim(
     zmanim_calc = ZmanimCalculator(lat, lng, date_, elevation)
 
     zmanim = {}
-    for zman_name, is_active in settings.dict().items():
+    for zman_name, is_active in settings.model_dump().items():
         if not is_active:
             continue
 
@@ -138,6 +138,6 @@ def is_asur_bemelaha(
     location = GeoLocation('', lat, lng, tz, elevation)
     calendar = ZmanimCalendar(geo_location=location, date=dt_.date())
 
-    dt_ = dt_.astimezone(pytz.timezone(tz))
+    dt_ = dt_.astimezone(zoneinfo.ZoneInfo(tz))
     resp = calendar.is_assur_bemelacha(current_time=dt_, in_israel=is_israel)
     return BooleanResp(result=resp)

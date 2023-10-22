@@ -15,7 +15,7 @@ def test_regular_holiday():
     }
 
     actual = get_simple_holiday(SimpleHolidayChoices.tu_bi_shvat.value, PY_DATE)
-    assert actual.dict(exclude_none=True, by_alias=True) == expected
+    assert actual.model_dump(exclude_none=True, by_alias=True) == expected
 
 
 def test_yom_hashoah():
@@ -28,7 +28,7 @@ def test_yom_hashoah():
     }
 
     actual = get_simple_holiday(SimpleHolidayChoices.yom_hashoah.value, PY_DATE)
-    assert actual.dict(exclude_none=True, by_alias=True) == expected
+    assert actual.model_dump(exclude_none=True, by_alias=True) == expected
 
 
 def test_yom_hashoah_on_friday():
@@ -41,7 +41,7 @@ def test_yom_hashoah_on_friday():
     }
 
     actual = get_simple_holiday(SimpleHolidayChoices.yom_hashoah.value, date(2021, 4, 1))
-    assert actual.dict(exclude_none=True, by_alias=True) == expected
+    assert actual.model_dump(exclude_none=True, by_alias=True) == expected
 
 
 def test_yom_hashoah_on_sunday():
@@ -54,7 +54,7 @@ def test_yom_hashoah_on_sunday():
     }
 
     actual = get_simple_holiday(SimpleHolidayChoices.yom_hashoah.value, date(2024, 4, 1))
-    assert actual.dict(exclude_none=True, by_alias=True) == expected
+    assert actual.model_dump(exclude_none=True, by_alias=True) == expected
 
 
 def test_yom_hazikaron():
@@ -67,7 +67,7 @@ def test_yom_hazikaron():
     }
 
     actual = get_simple_holiday(SimpleHolidayChoices.yom_hazikaron.value, PY_DATE)
-    assert actual.dict(exclude_none=True, by_alias=True) == expected
+    assert actual.model_dump(exclude_none=True, by_alias=True) == expected
 
 
 def test_yom_hazikaron_friday_yom_haatzmaut_shabbat():
@@ -88,8 +88,8 @@ def test_yom_hazikaron_friday_yom_haatzmaut_shabbat():
 
     actual_1 = get_simple_holiday(SimpleHolidayChoices.yom_hazikaron.value, date(2021, 4, 1))
     actual_2 = get_simple_holiday(SimpleHolidayChoices.yom_haatzmaut.value, date(2021, 4, 1))
-    assert actual_1.dict(exclude_none=True, by_alias=True) == expected_1
-    assert actual_2.dict(exclude_none=True, by_alias=True) == expected_2
+    assert actual_1.model_dump(exclude_none=True, by_alias=True) == expected_1
+    assert actual_2.model_dump(exclude_none=True, by_alias=True) == expected_2
 
 
 def test_yom_hazikaron_shabbat_yom_haatzmaut_sunday():
@@ -110,8 +110,8 @@ def test_yom_hazikaron_shabbat_yom_haatzmaut_sunday():
 
     actual_1 = get_simple_holiday(SimpleHolidayChoices.yom_hazikaron.value, date(2024, 4, 1))
     actual_2 = get_simple_holiday(SimpleHolidayChoices.yom_haatzmaut.value, date(2024, 4, 1))
-    assert actual_1.dict(exclude_none=True, by_alias=True) == expected_1
-    assert actual_2.dict(exclude_none=True, by_alias=True) == expected_2
+    assert actual_1.model_dump(exclude_none=True, by_alias=True) == expected_1
+    assert actual_2.model_dump(exclude_none=True, by_alias=True) == expected_2
 
 
 def test_yom_hazikaron_wednesdey_yom_haatzmaut_thursday():
@@ -132,8 +132,8 @@ def test_yom_hazikaron_wednesdey_yom_haatzmaut_thursday():
 
     actual_1 = get_simple_holiday(SimpleHolidayChoices.yom_hazikaron.value, date(2022, 4, 1))
     actual_2 = get_simple_holiday(SimpleHolidayChoices.yom_haatzmaut.value, date(2022, 4, 1))
-    assert actual_1.dict(exclude_none=True, by_alias=True) == expected_1
-    assert actual_2.dict(exclude_none=True, by_alias=True) == expected_2
+    assert actual_1.model_dump(exclude_none=True, by_alias=True) == expected_1
+    assert actual_2.model_dump(exclude_none=True, by_alias=True) == expected_2
 
 
 def test_holiday_ducing_holiday():
@@ -145,7 +145,7 @@ def test_holiday_ducing_holiday():
         'date': date.fromisoformat('2021-11-29')
     }
 
-    actual = get_simple_holiday(SimpleHolidayChoices.chanukah.value, date(2021, 12, 1)).dict(exclude_none=True, by_alias=True)
+    actual = get_simple_holiday(SimpleHolidayChoices.chanukah.value, date(2021, 12, 1)).model_dump(exclude_none=True, by_alias=True)
     assert actual == expected
 
 
@@ -157,5 +157,5 @@ def test_purim_on_first_adar():
         },
         'date': date.fromisoformat('2022-03-17')
     }
-    actual = get_simple_holiday(SimpleHolidayChoices.purim.value, date(2022, 3, 2)).dict(exclude_none=True, by_alias=True)
+    actual = get_simple_holiday(SimpleHolidayChoices.purim.value, date(2022, 3, 2)).model_dump(exclude_none=True, by_alias=True)
     assert actual == expected

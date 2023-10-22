@@ -1,4 +1,3 @@
-from typing import Optional, Tuple
 from datetime import date, timedelta
 
 from zmanim.util.geo_location import GeoLocation
@@ -119,8 +118,8 @@ def _get_first_day_date(name: str, date_: date, diaspora: bool = True) -> Jewish
 def fast(
         name: str,
         date_: date,
-        lat: Optional[float],
-        lng: Optional[float],
+        lat: float | None,
+        lng: float | None,
         elevation: int,
 ) -> Fast:
     tz = get_tz(lat, lng)

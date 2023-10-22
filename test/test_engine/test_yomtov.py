@@ -31,7 +31,7 @@ def test_regular_yomtov_in_istael():
         18,
         HavdalaChoices.tzeis_8_5_degrees
     )
-    assert actual.dict(exclude_none=True, by_alias=True) == expected
+    assert actual.model_dump(exclude_none=True, by_alias=True) == expected
 
 
 def test_regular_yomtov_in_diaspora():
@@ -64,7 +64,7 @@ def test_regular_yomtov_in_diaspora():
         18,
         HavdalaChoices.tzeis_8_5_degrees
     )
-    assert actual.dict(exclude_none=True, by_alias=True) == expected
+    assert actual.model_dump(exclude_none=True, by_alias=True) == expected
 
 
 def test_past_yomtov():
@@ -94,7 +94,7 @@ def test_past_yomtov():
         18,
         HavdalaChoices.tzeis_8_5_degrees
     )
-    assert actual.dict(exclude_none=True, by_alias=True) == expected
+    assert actual.model_dump(exclude_none=True, by_alias=True) == expected
 
 
 def test_rosh_hashana_in_diaspora():
@@ -127,7 +127,7 @@ def test_rosh_hashana_in_diaspora():
         18,
         HavdalaChoices.tzeis_8_5_degrees
     )
-    assert actual.dict(exclude_none=True, by_alias=True) == expected
+    assert actual.model_dump(exclude_none=True, by_alias=True) == expected
 
 
 def test_pre_shabbat_in_israel():
@@ -160,7 +160,7 @@ def test_pre_shabbat_in_israel():
         18,
         HavdalaChoices.tzeis_8_5_degrees
     )
-    assert actual.dict(exclude_none=True, by_alias=True) == expected
+    assert actual.model_dump(exclude_none=True, by_alias=True) == expected
 
 
 def test_pre_shabbat_in_diaspora():
@@ -197,7 +197,7 @@ def test_pre_shabbat_in_diaspora():
         18,
         HavdalaChoices.tzeis_8_5_degrees
     )
-    assert actual.dict(exclude_none=True, by_alias=True) == expected
+    assert actual.model_dump(exclude_none=True, by_alias=True) == expected
 
 
 def test_post_shabbat_in_israel():
@@ -230,7 +230,7 @@ def test_post_shabbat_in_israel():
         18,
         HavdalaChoices.tzeis_8_5_degrees
     )
-    assert actual.dict(exclude_none=True, by_alias=True) == expected
+    assert actual.model_dump(exclude_none=True, by_alias=True) == expected
 
 
 def test_post_shabbat_in_diaspora():
@@ -278,7 +278,7 @@ def test_post_shabbat_in_diaspora():
         18,
         HavdalaChoices.tzeis_8_5_degrees
     )
-    assert actual.dict(exclude_none=True, by_alias=True) == expected
+    assert actual.model_dump(exclude_none=True, by_alias=True) == expected
 
 
 def test_second_yt_is_shabbat():
@@ -322,7 +322,7 @@ def test_second_yt_is_shabbat():
         18,
         HavdalaChoices.tzeis_8_5_degrees
     )
-    assert actual.dict(exclude_none=True, by_alias=True) == expected
+    assert actual.model_dump(exclude_none=True, by_alias=True) == expected
 
 
 def test_peesach_part_2_post_shabbat_in_istael():
@@ -362,4 +362,4 @@ def test_peesach_part_2_post_shabbat_in_istael():
         18,
         HavdalaChoices.tzeis_8_5_degrees
     )
-    assert actual.dict(exclude_none=True, by_alias=True) == expected
+    assert actual.model_dump(exclude_none=True, by_alias=True) == expected

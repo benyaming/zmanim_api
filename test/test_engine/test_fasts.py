@@ -28,7 +28,7 @@ def test_regular_fast():
         LNG,
         ZERO_ELEVATION
     )
-    assert actual.dict(exclude_none=True, by_alias=True) == expected
+    assert actual.model_dump(exclude_none=True, by_alias=True) == expected
 
 
 def test_moved_fast_esther():
@@ -53,7 +53,7 @@ def test_moved_fast_esther():
         LNG,
         ZERO_ELEVATION
     )
-    assert actual.dict(exclude_none=True, by_alias=True) == expected
+    assert actual.model_dump(exclude_none=True, by_alias=True) == expected
 
 
 def test_moved_fast_tammuz_and_av():
@@ -100,8 +100,8 @@ def test_moved_fast_tammuz_and_av():
         ZERO_ELEVATION,
     )
 
-    assert actual_1.dict(exclude_none=True, by_alias=True) == expected_1
-    assert actual_2.dict(exclude_none=True, by_alias=True) == expected_2
+    assert actual_1.model_dump(exclude_none=True, by_alias=True) == expected_1
+    assert actual_2.model_dump(exclude_none=True, by_alias=True) == expected_2
 
 
 def test_day_after_moved_fast_tammuz_and_av():
@@ -147,8 +147,8 @@ def test_day_after_moved_fast_tammuz_and_av():
         ZERO_ELEVATION,
     )
 
-    assert actual_1.dict(exclude_none=True, by_alias=True) == expected_1
-    assert actual_2.dict(exclude_none=True, by_alias=True) == expected_2
+    assert actual_1.model_dump(exclude_none=True, by_alias=True) == expected_1
+    assert actual_2.model_dump(exclude_none=True, by_alias=True) == expected_2
 
 
 def test_9_of_av_in_north():
@@ -170,5 +170,5 @@ def test_9_of_av_in_north():
         63.44563381372263,
         13.49966869597185,
         ZERO_ELEVATION,
-    ).dict(exclude_none=True, by_alias=True)
+    ).model_dump(exclude_none=True, by_alias=True)
     assert actual == expected

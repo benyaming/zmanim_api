@@ -10,11 +10,11 @@ def test_regular_rosh_chodesh():
         'month_name': 'iyar',
         'days': [date.fromisoformat('2020-04-24'), date.fromisoformat('2020-04-25')],
         'duration': 2,
-        'molad': (dt.fromisoformat('2020-04-22T22:58'), 12)
+        'molad': ('2020-04-22T22:58', 12)
     }
 
     actual = get_next_rosh_chodesh(PY_DATE)
-    assert actual.dict(exclude_none=True, by_alias=True) == expected
+    assert actual.model_dump(exclude_none=True, by_alias=True) == expected
 
 
 def test_rosh_chodesh_during_rosh_chodesh():
@@ -23,11 +23,11 @@ def test_rosh_chodesh_during_rosh_chodesh():
         'month_name': 'iyar',
         'days': [date.fromisoformat('2020-04-24'), date.fromisoformat('2020-04-25')],
         'duration': 2,
-        'molad': (dt.fromisoformat('2020-04-22T22:58'), 12)
+        'molad': ('2020-04-22T22:58', 12)
     }
 
     actual = get_next_rosh_chodesh(date(2020, 4, 25))
-    assert actual.dict(exclude_none=True, by_alias=True) == expected
+    assert actual.model_dump(exclude_none=True, by_alias=True) == expected
 
 
 def test_rosh_chodesh_before_rosh_hashana():
@@ -36,8 +36,8 @@ def test_rosh_chodesh_before_rosh_hashana():
         'month_name': 'cheshvan',
         'days': [date.fromisoformat('2020-10-18'), date.fromisoformat('2020-10-19')],
         'duration': 2,
-        'molad': (dt.fromisoformat('2020-10-17T03:23'), 0)
+        'molad': ('2020-10-17T03:23', 0)
     }
 
     actual = get_next_rosh_chodesh(date(2020, 9, 1))
-    assert actual.dict(exclude_none=True, by_alias=True) == expected
+    assert actual.model_dump(exclude_none=True, by_alias=True) == expected

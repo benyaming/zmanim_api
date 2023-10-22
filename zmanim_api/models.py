@@ -1,25 +1,23 @@
 from __future__ import annotations
-from datetime import datetime, time, date
-from typing import List, Optional, Tuple
-from pydantic import BaseModel
+
+import json
+from datetime import datetime, time, date as Date
+from pydantic import BaseModel, field_serializer
 
 
 class SimpleSettings(BaseModel):
-    date_: Optional[date] = None
-    jewish_date: Optional[str] = None
-    holiday_name: Optional[str] = None
-
-    class Config:
-        fields = {'date_': 'date'}
+    date: Date | None = None
+    jewish_date: str | None = None
+    holiday_name: str | None = None
 
 
 class Settings(SimpleSettings):
-    cl_offset: Optional[int] = None
-    havdala_opinion: Optional[str] = None
-    coordinates: Optional[Tuple[float, float]] = None
-    elevation: Optional[int] = None
-    fast_name: Optional[str] = None
-    yomtov_name: Optional[str] = None
+    cl_offset: int | None = None
+    havdala_opinion: str | None = None
+    coordinates: tuple[float, float] | None = None
+    elevation: int | None = None
+    fast_name: str | None = None
+    yomtov_name: str | None = None
 
 
 class ZmanimRequest(BaseModel):
@@ -46,31 +44,31 @@ class ZmanimRequest(BaseModel):
 
 class ZmanimResponse(BaseModel):
     settings: Settings
-    alos: Optional[datetime] = None
-    sunrise: Optional[datetime] = None
-    misheyakir_10_2: Optional[datetime] = None
-    sof_zman_shema_ma: Optional[datetime] = None
-    sof_zman_shema_gra: Optional[datetime] = None
-    sof_zman_tefila_ma: Optional[datetime] = None
-    sof_zman_tefila_gra: Optional[datetime] = None
-    chatzos: Optional[datetime] = None
-    mincha_gedola: Optional[datetime] = None
-    mincha_ketana: Optional[datetime] = None
-    plag_mincha: Optional[datetime] = None
-    sunset: Optional[datetime] = None
-    tzeis_5_95_degrees: Optional[datetime] = None
-    tzeis_8_5_degrees: Optional[datetime] = None
-    tzeis_42_minutes: Optional[datetime] = None
-    tzeis_72_minutes: Optional[datetime] = None
-    chatzot_laila: Optional[datetime] = None
-    astronomical_hour_ma: Optional[time] = None
-    astronomical_hour_gra: Optional[time] = None
+    alos: datetime | None = None
+    sunrise: datetime | None = None
+    misheyakir_10_2: datetime | None = None
+    sof_zman_shema_ma: datetime | None = None
+    sof_zman_shema_gra: datetime | None = None
+    sof_zman_tefila_ma: datetime | None = None
+    sof_zman_tefila_gra: datetime | None = None
+    chatzos: datetime | None = None
+    mincha_gedola: datetime | None = None
+    mincha_ketana: datetime | None = None
+    plag_mincha: datetime | None = None
+    sunset: datetime | None = None
+    tzeis_5_95_degrees: datetime | None = None
+    tzeis_8_5_degrees: datetime | None = None
+    tzeis_42_minutes: datetime | None = None
+    tzeis_72_minutes: datetime | None = None
+    chatzot_laila: datetime | None = None
+    astronomical_hour_ma: time | None = None
+    astronomical_hour_gra: time | None = None
 
 
 class AsurBeMelachaDay(BaseModel):
-    date: Optional[date] = None
-    candle_lighting: Optional[datetime] = None
-    havdala: Optional[datetime] = None
+    date: Date | None = None
+    candle_lighting: datetime | None = None
+    havdala: datetime | None = None
 
 
 class Shabbat(AsurBeMelachaDay):
@@ -82,14 +80,19 @@ class Shabbat(AsurBeMelachaDay):
 class RoshChodesh(BaseModel):
     settings: SimpleSettings
     month_name: str
-    days: List[date]
+    days: list[Date]
     duration: int
-    molad: Tuple[datetime, int]
+    molad: tuple[datetime, int]
 
-    class Config:
-        json_encoders = {
-            datetime: lambda d: d.isoformat(timespec='minutes')
-        }
+    @field_serializer('molad')
+    def serialize_molad(self, molad: tuple[datetime, int], _info) -> tuple[str, int]:
+        return molad[0].isoformat(timespec='minutes'), molad[1]
+
+    # model_config = ConfigDict(
+    #     json_encoders={
+    #         datetime: lambda d: d.isoformat(timespec='minutes')
+    #     }
+    # )
 
 
 class DafYomi(BaseModel):
@@ -100,34 +103,34 @@ class DafYomi(BaseModel):
 
 class Holiday(BaseModel):
     settings: SimpleSettings
-    date: date
+    date: Date
 
 
 class YomTov(BaseModel):
     settings: Settings
-    pre_shabbat: Optional[AsurBeMelachaDay] = None
+    pre_shabbat: AsurBeMelachaDay | None = None
 
-    pesach_eating_chanetz_till: Optional[datetime] = None
-    pesach_burning_chanetz_till: Optional[datetime] = None
+    pesach_eating_chanetz_till: datetime | None = None
+    pesach_burning_chanetz_till: datetime | None = None
 
     day_1: AsurBeMelachaDay
-    day_2: Optional[AsurBeMelachaDay] = None
-    post_shabbat: Optional[AsurBeMelachaDay] = None
-    hoshana_rabba: Optional[date] = None
+    day_2: AsurBeMelachaDay | None = None
+    post_shabbat: AsurBeMelachaDay | None = None
+    hoshana_rabba: Date | None = None
 
-    pesach_part_2_day_1: Optional[AsurBeMelachaDay] = None
-    pesach_part_2_day_2: Optional[AsurBeMelachaDay] = None
-    pesach_part_2_post_shabat: Optional[AsurBeMelachaDay] = None
+    pesach_part_2_day_1: AsurBeMelachaDay | None = None
+    pesach_part_2_day_2: AsurBeMelachaDay | None = None
+    pesach_part_2_post_shabat: AsurBeMelachaDay | None = None
 
 
 class Fast(BaseModel):
     settings: Settings
-    moved_fast: Optional[bool] = False
-    fast_start: Optional[datetime] = None
-    chatzot: Optional[datetime] = None
-    havdala_5_95_dgr: Optional[datetime] = None
-    havdala_8_5_dgr: Optional[datetime] = None
-    havdala_42_min: Optional[datetime] = None
+    moved_fast: bool | None = False
+    fast_start: datetime | None = None
+    chatzot: datetime | None = None
+    havdala_5_95_dgr: datetime | None = None
+    havdala_8_5_dgr: datetime | None = None
+    havdala_42_min: datetime | None = None
 
 
 class BooleanResp(BaseModel):

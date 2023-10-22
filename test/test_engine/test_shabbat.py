@@ -21,7 +21,7 @@ def test_regular_shabbat():
     }
 
     resp = get_shabbat(LAT, LNG, ZERO_ELEVATION, CL_OFFSET, HavdalaChoices.tzeis_8_5_degrees, PY_DATE)
-    assert resp.dict(exclude_none=True, by_alias=True) == expected
+    assert resp.model_dump(exclude_none=True, by_alias=True) == expected
 
 
 def test_shabbat_with_late_cl_warning():
@@ -41,7 +41,7 @@ def test_shabbat_with_late_cl_warning():
 
     resp = get_shabbat(55.5, 37.7, ZERO_ELEVATION, CL_OFFSET, HavdalaChoices.tzeis_8_5_degrees,
                        date(2020, 6, 15))
-    assert resp.dict(exclude_none=True, by_alias=True) == expected
+    assert resp.model_dump(exclude_none=True, by_alias=True) == expected
 
 
 def test_shabbat_with_tzeit_by_chatzot_layla():
@@ -61,7 +61,7 @@ def test_shabbat_with_tzeit_by_chatzot_layla():
 
     resp = get_shabbat(69.77, 25.01, ZERO_ELEVATION, CL_OFFSET, HavdalaChoices.tzeis_8_5_degrees,
                        date(2021, 7, 24))
-    assert resp.dict(exclude_none=True, by_alias=True) == expected
+    assert resp.model_dump(exclude_none=True, by_alias=True) == expected
 
 
 def test_shabbat_with_polar_daynight():
@@ -79,7 +79,7 @@ def test_shabbat_with_polar_daynight():
 
     resp = get_shabbat(76.60, 103.45, ZERO_ELEVATION, CL_OFFSET, HavdalaChoices.tzeis_8_5_degrees,
                        date(2021, 7, 25))
-    assert resp.dict(exclude_none=True, by_alias=True) == expected
+    assert resp.model_dump(exclude_none=True, by_alias=True) == expected
 
 
 def test_shabbat_with_different_parsha():
@@ -113,8 +113,8 @@ def test_shabbat_with_different_parsha():
     resp_1 = get_shabbat(LAT, LNG, ZERO_ELEVATION, CL_OFFSET, HavdalaChoices.tzeis_8_5_degrees, date.fromisoformat('2020-05-30'))
     resp_2 = get_shabbat(37.7, LNG, ZERO_ELEVATION, CL_OFFSET, HavdalaChoices.tzeis_8_5_degrees, date.fromisoformat('2020-05-30'))
 
-    assert resp_1.dict(exclude_none=True, by_alias=True) == expected_1
-    assert resp_2.dict(exclude_none=True, by_alias=True) == expected_2
+    assert resp_1.model_dump(exclude_none=True, by_alias=True) == expected_1
+    assert resp_2.model_dump(exclude_none=True, by_alias=True) == expected_2
 
 
 def test_shabbat_with_yomtov():
@@ -162,6 +162,6 @@ def test_shabbat_with_yomtov():
     resp_2 = get_shabbat(37.7, LNG, ZERO_ELEVATION, CL_OFFSET, HavdalaChoices.tzeis_8_5_degrees, date.fromisoformat('2020-05-29'))
     resp_3 = get_shabbat(37.7, LNG, ZERO_ELEVATION, CL_OFFSET, HavdalaChoices.tzeis_8_5_degrees, date.fromisoformat('2020-04-10'))
 
-    assert resp_1.dict(exclude_none=True, by_alias=True) == expected_1
-    assert resp_2.dict(exclude_none=True, by_alias=True) == expected_2
-    assert resp_3.dict(exclude_none=True, by_alias=True) == expected_3
+    assert resp_1.model_dump(exclude_none=True, by_alias=True) == expected_1
+    assert resp_2.model_dump(exclude_none=True, by_alias=True) == expected_2
+    assert resp_3.model_dump(exclude_none=True, by_alias=True) == expected_3

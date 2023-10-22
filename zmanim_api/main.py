@@ -1,4 +1,5 @@
 import logging
+from contextlib import asynccontextmanager
 from os import getenv
 
 import sentry_sdk
@@ -15,14 +16,22 @@ from zmanim_api.routers.main_router import main_router
 logger = get_colorized_logger()
 logger.setLevel(DEBUG)
 
-app = FastAPI(root_path=f'/{ROOT_PATH}', docs_url='/', title='Zmanim API', version='1.0.1')
+
+@asynccontextmanager
+async def lifespan(_: FastAPI):  # pragma: no cover
+    logger.info('STARTING ZMANIM API...')
+    yield
+
+
+app = FastAPI(
+    lifespan=lifespan,
+    root_path=f'/{ROOT_PATH}',
+    docs_url='/',
+    title='Zmanim API',
+    version='1.0.1'
+)
 
 app.include_router(main_router, tags=['Main'])
-
-
-@app.on_event('startup')
-async def on_start():  # pragma: no cover
-    logger.info('STARTING ZMANIM API...')
 
 
 @app.middleware('http')  # pragma: no cover

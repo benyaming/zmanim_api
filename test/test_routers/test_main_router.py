@@ -98,19 +98,14 @@ def test_shabbat_endpoint():
 def test_rosh_chodesh_endpoint():
     params = {'date': DATE}
     expected = {
-        'settings': {
-            'date': '2020-04-15'
-        },
+        'settings': {'date': '2020-04-15'},
         'month_name': 'iyar',
         'days': [
             '2020-04-24',
             '2020-04-25'
         ],
         'duration': 2,
-        'molad': [
-            '2020-04-22T22:58',
-            12
-        ]
+        'molad': ['2020-04-22T22:58', 12]
     }
 
     resp = client.get('/rosh_chodesh', params=params)

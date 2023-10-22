@@ -1,8 +1,7 @@
+import zoneinfo
 from enum import Enum
 from typing import Optional
 from datetime import date, datetime
-
-import pytz
 
 from zmanim_api.utils import get_tz
 
@@ -72,7 +71,7 @@ def validate_date_or_get_now(date_: Optional[str], lat: float = 32.09, lng: floa
 
     else:
         tz_name = get_tz(lat, lng)
-        tz = pytz.timezone(tz_name)
+        tz = zoneinfo.ZoneInfo(tz_name)
 
         response = datetime.now().astimezone(tz).date()
     return response
@@ -86,6 +85,6 @@ def validate_datetime_or_get_now(dt: Optional[str], lat: float, lng: float) -> d
             raise DateException(e)
     else:
         tz_name = get_tz(lat, lng)
-        tz = pytz.timezone(tz_name)
+        tz = zoneinfo.ZoneInfo(tz_name)
         response = datetime.now().astimezone(tz)
     return response

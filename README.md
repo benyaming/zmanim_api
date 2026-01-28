@@ -56,14 +56,14 @@ To get a local copy up and running follow these simple steps.
 
 #### Python
 1) Clone/fork the repo
-2) Use PDM for build environment and install dependencies: `pdm install`
+2) Install uv and dependencies: `pip install uv` then `uv sync` (or `uv sync --dev` for tests)
 3) Go to project folder: `cd %repo_location%/zmanim_api`
 4) Run `python main.py`
 5) Open http://localhost:8000 in your browser to explore the swagger
 
 ### Tests
-Run tests: `pytest test/`  
-Run with coverage: `coverage run -m pytest -v test/` or `coverage xml`
+Run tests: `uv run tests` (or `uv run pytest test/`)  
+Run with coverage: `uv run tests` then `uv run xml`
 
 
 
@@ -134,5 +134,3 @@ Project Link: [https://github.com/benyaming/zmanim_api](https://github.com/benya
 [license-url]: https://github.com/benyaming/zmanim_api/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/benyaming
-
-

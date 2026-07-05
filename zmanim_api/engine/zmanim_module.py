@@ -4,8 +4,9 @@ from datetime import date, datetime as dt, time, timedelta, datetime
 
 import arrow
 from zmanim.util.geo_location import GeoLocation
-from zmanim.zmanim_calendar import ZmanimCalendar
 from zmanim.hebrew_calendar.jewish_date import JewishDate
+
+from .calendar import ZmanimCalendar
 
 from zmanim_api.utils import get_tz, is_diaspora
 from zmanim_api.models import ZmanimRequest, ZmanimResponse, Settings, BooleanResp
@@ -29,7 +30,7 @@ class ZmanimCalculator:
 
     @property
     def sunrise(self) -> Optional[datetime]:
-        return self.zc.sunrise()
+        return self.zc.hanetz()
 
     @property
     def alos(self) -> Optional[datetime]:
@@ -73,7 +74,7 @@ class ZmanimCalculator:
 
     @property
     def sunset(self) -> Optional[datetime]:
-        return self.zc.sunset()
+        return self.zc.shkia()
 
     @property
     def tzeis_8_5_degrees(self) -> Optional[datetime]:

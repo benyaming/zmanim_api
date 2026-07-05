@@ -38,7 +38,16 @@ def test_elevation_does_not_affect_degree_based_zmanim():
     assert at_elevation.tzeis_8_5_degrees == at_sea_level.tzeis_8_5_degrees
     assert at_elevation.alos == at_sea_level.alos
     assert at_elevation.misheyakir_10_2 == at_sea_level.misheyakir_10_2
+
+
+def test_elevation_does_not_affect_chatzos():
+    # chatzos is the solar transit, not a shaos-zmaniyos time, so the
+    # horizon — and therefore elevation — plays no role in it
+    at_sea_level = get_zmanim(ZMANIM_DATE, LAT, LNG, ZERO_ELEVATION, ZmanimRequest())
+    at_elevation = get_zmanim(ZMANIM_DATE, LAT, LNG, ELEVATION, ZmanimRequest())
+
     assert at_elevation.chatzos == at_sea_level.chatzos
+    assert at_elevation.chatzot_laila == at_sea_level.chatzot_laila
 
 
 def test_elevation_shifts_fast_start():

@@ -1,9 +1,10 @@
 from datetime import timedelta, date
 
 from zmanim.util.geo_location import GeoLocation
-from zmanim.zmanim_calendar import ZmanimCalendar
 from zmanim.hebrew_calendar.jewish_calendar import JewishCalendar
 from zmanim.limudim.calculators.parsha import Parsha
+
+from .calendar import ZmanimCalendar
 
 from ..models import Shabbat, Settings
 from ..api_helpers import HavdalaChoices, HAVDALA_PARAMS

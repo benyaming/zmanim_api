@@ -1,8 +1,9 @@
 from datetime import date, timedelta
 
 from zmanim.util.geo_location import GeoLocation
-from zmanim.zmanim_calendar import ZmanimCalendar
 from zmanim.hebrew_calendar.jewish_calendar import JewishCalendar
+
+from .calendar import ZmanimCalendar
 
 from ..utils import get_tz, is_diaspora
 from ..api_helpers import HAVDALA_PARAMS, HavdalaChoices
@@ -169,7 +170,7 @@ def fast(
 
     data['havdala_8_5_dgr'] = fast_calc.tzais({'degrees': 8.5})
     data['havdala_5_95_dgr'] = fast_calc.tzais({'degrees': 5.95})
-    data['havdala_42_min'] = fast_calc.sunset() + timedelta(minutes=42)
+    data['havdala_42_min'] = fast_calc.tzais({'offset': 42})
 
     settings = Settings(
         coordinates=(lat, lng),

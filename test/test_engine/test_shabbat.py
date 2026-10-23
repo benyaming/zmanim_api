@@ -1,14 +1,16 @@
 from datetime import date, datetime as dt
 
 from zmanim_api.engine.shabbat import get_shabbat
+from zmanim_api.engine.zmanim_module import get_zmanim
 from zmanim_api.api_helpers import HavdalaChoices
+from zmanim_api.models import ZmanimRequest
 from ..consts import LAT, LNG, ZERO_ELEVATION, CL_OFFSET, PY_DATE
 
 
 def test_regular_shabbat():
     expected = {
-        'candle_lighting': dt.fromisoformat('2020-04-17T18:53:00+03:00'),
-        'havdala': dt.fromisoformat('2020-04-18T19:49:00+03:00'),
+        'candle_lighting': dt.fromisoformat('2020-04-17T18:53:29.309197+03:00'),
+        'havdala': dt.fromisoformat('2020-04-18T19:49:56.015490+03:00'),
         'settings': {
             'date': date.fromisoformat('2020-04-15'),
             'cl_offset': 18,
@@ -26,8 +28,8 @@ def test_regular_shabbat():
 
 def test_shabbat_with_late_cl_warning():
     expected = {
-        'candle_lighting': dt.fromisoformat('2020-06-19T20:57:00+03:00'),
-        'havdala': dt.fromisoformat('2020-06-20T22:55:00+03:00'),
+        'candle_lighting': dt.fromisoformat('2020-06-19T20:57:30.073986+03:00'),
+        'havdala': dt.fromisoformat('2020-06-20T22:55:52.926784+03:00'),
         'settings': {
             'date': date.fromisoformat('2020-06-15'),
             'cl_offset': 18,
@@ -46,8 +48,8 @@ def test_shabbat_with_late_cl_warning():
 
 def test_shabbat_with_tzeit_by_chatzot_layla():
     expected = {
-        'candle_lighting': dt.fromisoformat('2021-07-30T22:49:00+02:00'),
-        'havdala': dt.fromisoformat('2021-08-01T00:22:00+02:00'),
+        'candle_lighting': dt.fromisoformat('2021-07-30T22:49:19.853475+02:00'),
+        'havdala': dt.fromisoformat('2021-08-01T00:22:38.590846+02:00'),
         'settings': {
             'date': date.fromisoformat('2021-07-24'),
             'cl_offset': 18,
@@ -84,8 +86,8 @@ def test_shabbat_with_polar_daynight():
 
 def test_shabbat_with_different_parsha():
     expected_1 = {
-        'candle_lighting': dt.fromisoformat('2020-06-05T19:26:00+03:00'),
-        'havdala': dt.fromisoformat('2020-06-06T20:26:00+03:00'),
+        'candle_lighting': dt.fromisoformat('2020-06-05T19:26:17.092514+03:00'),
+        'havdala': dt.fromisoformat('2020-06-06T20:26:54.026459+03:00'),
         'settings': {
             'date': date.fromisoformat('2020-05-30'),
             'cl_offset': 18,
@@ -97,8 +99,8 @@ def test_shabbat_with_different_parsha():
         'late_cl_warning': False
     }
     expected_2 = {
-        'candle_lighting': dt.fromisoformat('2020-06-05T19:41:00+03:00'),
-        'havdala': dt.fromisoformat('2020-06-06T20:46:00+03:00'),
+        'candle_lighting': dt.fromisoformat('2020-06-05T19:41:17.010714+03:00'),
+        'havdala': dt.fromisoformat('2020-06-06T20:46:30.467608+03:00'),
         'settings': {
             'date': date.fromisoformat('2020-05-30'),
             'cl_offset': 18,
@@ -119,8 +121,8 @@ def test_shabbat_with_different_parsha():
 
 def test_shabbat_with_yomtov():
     expected_1 = {
-        'candle_lighting': dt.fromisoformat('2020-05-29T19:22:00+03:00'),
-        'havdala': dt.fromisoformat('2020-05-30T20:22:00+03:00'),
+        'candle_lighting': dt.fromisoformat('2020-05-29T19:22:26.312364+03:00'),
+        'havdala': dt.fromisoformat('2020-05-30T20:22:41.756404+03:00'),
         'settings': {
             'date': date.fromisoformat('2020-05-29'),
             'cl_offset': 18,
@@ -132,8 +134,8 @@ def test_shabbat_with_yomtov():
         'late_cl_warning': False
     }
     expected_2 = {
-        'candle_lighting': dt.fromisoformat('2020-05-29T19:36:00+03:00'),
-        'havdala': dt.fromisoformat('2020-05-30T20:41:00+03:00'),
+        'candle_lighting': dt.fromisoformat('2020-05-29T19:36:44.444321+03:00'),
+        'havdala': dt.fromisoformat('2020-05-30T20:41:28.277038+03:00'),
         'settings': {
             'date': date.fromisoformat('2020-05-29'),
             'cl_offset': 18,
@@ -145,8 +147,8 @@ def test_shabbat_with_yomtov():
         'late_cl_warning': False
     }
     expected_3 = {
-        'candle_lighting': dt.fromisoformat('2020-04-10T18:53:00+03:00'),
-        'havdala': dt.fromisoformat('2020-04-11T19:52:00+03:00'),
+        'candle_lighting': dt.fromisoformat('2020-04-10T18:53:49.571051+03:00'),
+        'havdala': dt.fromisoformat('2020-04-11T19:52:51.908138+03:00'),
         'settings': {
             'date': date.fromisoformat('2020-04-10'),
             'cl_offset': 18,
@@ -165,3 +167,13 @@ def test_shabbat_with_yomtov():
     assert resp_1.model_dump(exclude_none=True, by_alias=True) == expected_1
     assert resp_2.model_dump(exclude_none=True, by_alias=True) == expected_2
     assert resp_3.model_dump(exclude_none=True, by_alias=True) == expected_3
+
+
+def test_shabbat_havdala_keeps_seconds():
+    # clients round havdala up to the next whole minute, which only works
+    # if the seconds survive — truncating here made havdala too early
+    resp = get_shabbat(LAT, LNG, ZERO_ELEVATION, CL_OFFSET, HavdalaChoices.tzeis_8_5_degrees, PY_DATE)
+    zmanim = get_zmanim(date(2020, 4, 18), LAT, LNG, ZERO_ELEVATION, ZmanimRequest())
+
+    assert resp.havdala == zmanim.tzeis_8_5_degrees
+    assert resp.havdala.second != 0

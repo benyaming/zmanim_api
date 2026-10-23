@@ -75,8 +75,8 @@ def test_zmanim_endpoint():
 def test_shabbat_endpoint():
     params = {**GEO_DATE_PARAMS, **ASUR_BEMELACHA_PARAMS}
     expected = {
-        'candle_lighting': '2020-04-17T18:53:00+03:00',
-        'havdala': '2020-04-18T19:49:00+03:00',
+        'candle_lighting': '2020-04-17T18:53:29.309197+03:00',
+        'havdala': '2020-04-18T19:49:56.015490+03:00',
         'settings': {
             'date': '2020-04-15',
             'cl_offset': 18,

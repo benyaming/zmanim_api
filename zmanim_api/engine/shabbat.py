@@ -51,9 +51,9 @@ def get_shabbat(
 
     data = {
         'torah_part': torah_part,
-        'candle_lighting': cl_time and cl_time.isoformat(timespec='minutes'),
+        'candle_lighting': cl_time,
         'cl_offset': cl_offset,
-        'havdala': havdala_time and havdala_time.isoformat(timespec='minutes'),
+        'havdala': havdala_time,
         'havdala_opinion': havdala.value,
         'late_cl_warning': late_cl_warning
     }
